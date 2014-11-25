@@ -27,7 +27,7 @@ namespace PEG
             LrParseEngine parseEngine = new LrParseEngine(Grammar, input);
             Expression startExpression = StartExpression ?? Grammar.StartExpression;
             IEnumerable<OutputRecord> outputRecords = startExpression.Execute(parseEngine);
-            if (outputRecords == null || (outputRecords.Any() && parseEngine.Position < input.Length))
+            if (outputRecords != null && outputRecords.Any() && parseEngine.Position < input.Length)
                 outputRecords = Enumerable.Empty<OutputRecord>();
             return outputRecords;
         }
