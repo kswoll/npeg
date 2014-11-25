@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\XoHoops\Common\Dependencies\NUnit\bin\net-2.0\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,9 +51,10 @@
     <Compile Include="Url\Url.cs" />
     <Compile Include="Url\UrlGrammar.cs" />
     <Compile Include="Url\UrlGrammarTest.cs" />
-    <Compile Include="Url\UrlMapper.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PEG\PEG.csproj">
       <Project>{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}</Project>
