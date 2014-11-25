@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEG", "PEG\PEG.csproj", "{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEG.Tests", "PEG.Tests\PEG.Tests.csproj", "{CD0816D9-5343-4448-B40D-994B0FC7643A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEG.Samples", "PEG.Samples\PEG.Samples.csproj", "{047D0347-6393-4C77-BE0B-B3E02E6B2633}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Log|Any CPU = Log|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}.Log|Any CPU.ActiveCfg = Log|Any CPU
+		{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}.Log|Any CPU.Build.0 = Log|Any CPU
+		{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD0816D9-5343-4448-B40D-994B0FC7643A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD0816D9-5343-4448-B40D-994B0FC7643A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD0816D9-5343-4448-B40D-994B0FC7643A}.Log|Any CPU.ActiveCfg = Log|Any CPU
+		{CD0816D9-5343-4448-B40D-994B0FC7643A}.Log|Any CPU.Build.0 = Log|Any CPU
+		{CD0816D9-5343-4448-B40D-994B0FC7643A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD0816D9-5343-4448-B40D-994B0FC7643A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{047D0347-6393-4C77-BE0B-B3E02E6B2633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{047D0347-6393-4C77-BE0B-B3E02E6B2633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{047D0347-6393-4C77-BE0B-B3E02E6B2633}.Log|Any CPU.ActiveCfg = Log|Any CPU
+		{047D0347-6393-4C77-BE0B-B3E02E6B2633}.Log|Any CPU.Build.0 = Log|Any CPU
+		{047D0347-6393-4C77-BE0B-B3E02E6B2633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{047D0347-6393-4C77-BE0B-B3E02E6B2633}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

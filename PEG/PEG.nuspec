@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>NPeg</title>
+    <authors>Kirk Woll</authors>
+    <owners>Kirk Woll</owners>
+    <licenseUrl>http://opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>http://code.google.com/p/npeg/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This parser is an implementation of a Packrat Parser with support for left-recursion.</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>peg parser c#</tags>
+  </metadata>
+</package>
