@@ -28,7 +28,7 @@ namespace PEG
             Expression startExpression = StartExpression ?? Grammar.StartExpression;
             IEnumerable<OutputRecord> outputRecords = startExpression.Execute(parseEngine);
             if (outputRecords != null && ((outputRecords.Any() && parseEngine.Position < input.Length) || !outputRecords.Any()))
-                outputRecords = Enumerable.Empty<OutputRecord>();
+                outputRecords = null;
             return outputRecords;
         }
     }

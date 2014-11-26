@@ -36,7 +36,8 @@ namespace PEG
         public static bool Match(this Expression expression, string input)
         {
             var parser = CreateParser(expression);
-            return parser.ParseString(input).Any();
+            var result = parser.ParseString(input);
+            return result != null && result.Any();
         }
 
         /// <summary>
