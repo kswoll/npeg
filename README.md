@@ -182,3 +182,29 @@ This pattern must start with the `a` character and can be followed by any number
 ### Zero Or More (-)
 
 Exactly like the one-or-more operator except it does not require at least one match.  In practice this acts like the "optional" variant of the one-or-more operator. 
+
+``` c#
+-'a'._() + 'b'
+```
+
+This pattern will accept any number of `a` characters (including none) followed by a `b`.  So `"ab"`, `"aab"`, and `"b"` are all valid.
+
+### Optional (~)
+
+Whatever expression follows the operator is considered optional.  This means that if the expression accepts the input, then it is used.  If, however, the expression fails to accept the input, it is ignored and parsing proceeds to the subsequent expression.
+
+``` c#
+'a' + ~'b'._() + 'c'
+```
+
+ Here the 'b' is optional so "abc" and "ac" are valid.
+ 
+ ### And 
+ 
+The operand must be satisfied.  However, even upon success no input is consumed.  Often used at the end of a sequence to verify that the input that follows the current sequence has a certain value.
+
+``` c#
+'a'._() + 'b' + !'c'._().And() + Peg.Any
+```
+
+Here we say, "allow the sequence of characters `a`, followed by `b`, *not* followed by `c`, but otherwise followed by any other character.
