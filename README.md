@@ -98,3 +98,50 @@ It's true, some of this syntax may look pretty foreign.  But one thing to rememb
 
 <img src="https://github.com/kswoll/npeg/blob/master/Docs/PEG1.png?raw=true" width="50%">
 
+## API Reference
+
+A PEG is built by composing complex expressions together based on simpler ones.   When they are composed inline as C# expressions and statements, they are referred to as patterns.  (These are what you saw in the two samples above)  Patterns are concise and easy to whip up when the need arises. Some disadvantages to them are that they are anonymous and they cannot support recursion.   For example, we earlier declared digit this way:
+
+``` c#
+var digit = +'0'.To('9');
+var pattern = digit + '.' + digit;
+```
+
+`pattern.ToString()` would yield `"? + '.' + ?"`.  If you want more readable strings, it is possible to name them explicitly:
+
+``` c#
+var digit = +'0'.To('9').Name("digit");
+```
+
+Feels a little dirty to type `"digit"` twice but now, `pattern.ToString()` would yield `"digit + '.' + digit"` -- just as you typed it.  
+
+Patterns also cannot support recursion.  For example, this simple domain name pattern is not possible:
+
+``` c#
+var word = +'a'.To('Z');
+var domain = domain + '.' + word | word;
+```
+
+This fails because we are trying to use domain before we have finished declaring it.  An alternative approach is to define a class that represents your syntax, and this is called a grammar.  A grammar is composed of a series of instance methods that return an Expression.  Each method represents a nonterminal.  (We created a nonterminal in the above example when we called `.Name("digit"))`.   A grammar for the above domain pattern would be:
+
+``` c#
+public class DomainGrammar : Grammar<DomainGrammar>
+{
+    public virtual Expression Domain()
+    {
+        return Domain() + '.' + Word() | Word();
+    }
+
+    public virtual Expression Word()
+    {
+        return +'a'.To('Z');
+    }
+}
+```
+
+As you can see, using this syntax it is possible for `Domain()` to recursively call itself.   Also, the nonterminals in a grammar are automatically named, saving you the step of calling the `.Name(...)` method as earlier. Grammars also have the advantage of publicly exposing the nonterminals in a way that is accessible for later mapping.   They are especially suited for constructing grammars for more complex languages, though can be used for the simplest patterns if desired.  
+
+Now let's take a look at all the expressions you have available to you.
+
+### Sequence (+)
+
