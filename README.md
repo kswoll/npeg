@@ -197,9 +197,9 @@ Whatever expression follows the operator is considered optional.  This means tha
 'a' + ~'b'._() + 'c'
 ```
 
- Here the 'b' is optional so "abc" and "ac" are valid.
+Here the 'b' is optional so "abc" and "ac" are valid.
  
- ### And 
+### And 
  
 The operand must be satisfied.  However, even upon success no input is consumed.  Often used at the end of a sequence to verify that the input that follows the current sequence has a certain value.
 
