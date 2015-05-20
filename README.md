@@ -145,3 +145,21 @@ Now let's take a look at all the expressions you have available to you.
 
 ### Sequence (+)
 
+A sequence allows you to define a string of expressions that must be satisfied.  It overloads the `+` operator so use it in the same way to concatenate two expressions together.
+
+``` c#
+    '@' + Peg.Any
+```
+
+This expression would allow any string that starts with a `@` symbol.
+
+### Ordered Choice (|)
+
+The ordered choice allows you to provide a set of possible patterns that will match.  Important: this operator evaluates from left to right.  That means the first match will be chosen, even if there is a potentially better match in a later choice.  As this is C#, it has lower precedence than the sequence `+` operator.  This means that by default (without parentheses) an ordered choice is composed of sequences (or even simpler expressions).  For example,
+
+``` c#
+'a' | 'b' + 'c'
+```
+
+This pattern allows `"a"` or `"bc"`, but not `"ab"` and not `"bc"`.  In other words, it's a choice between `'a'` or `'b'` + `'c'`.  What if we wanted a choice between `'a'` or `'b'` and then plus `'c'`?   Just use parentheses:
+
