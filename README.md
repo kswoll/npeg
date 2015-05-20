@@ -204,7 +204,15 @@ Here the 'b' is optional so "abc" and "ac" are valid.
 The operand must be satisfied.  However, even upon success no input is consumed.  Often used at the end of a sequence to verify that the input that follows the current sequence has a certain value.
 
 ``` c#
-'a'._() + 'b' + !'c'._().And() + Peg.Any
+'a'._() + 'b' + "c"._().And() + +Peg.Any
 ```
 
-Here we say, "allow the sequence of characters `a`, followed by `b`, *not* followed by `c`, but otherwise followed by any other character.
+Here we say, "allow the sequence of characters `a`, followed by `b`, *and* followed by `c`, but otherwise allowing any other following sequence of characters.
+
+### Not (!)
+
+The operand must not be satisfied.  If it is satisfied, then the parse fails. In this example, we allow the sequence `"ab"`, but it *must* be followed with `c`. Otherwise, any other following sequence of characters is valid.
+
+``` c#
+'a'._() + 'b' + !'c'._() + +Peg.Any
+```
