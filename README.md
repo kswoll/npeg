@@ -163,3 +163,22 @@ The ordered choice allows you to provide a set of possible patterns that will ma
 
 This pattern allows `"a"` or `"bc"`, but not `"ab"` and not `"bc"`.  In other words, it's a choice between `'a'` or `'b'` + `'c'`.  What if we wanted a choice between `'a'` or `'b'` and then plus `'c'`?   Just use parentheses:
 
+``` c#
+('a' | 'b') + 'c'
+```
+
+Now the strings "ac" and "bc" are accepted.
+
+### One Or More (+)
+
+While the same symbol as the Sequence operator, this uses the `+` unary prefix operator, and not the `+` binary operator.  Whatever expression follows the `+` may repeat any number of times but at least one iteration must match.
+
+``` c#
++'a'._() + 'b'
+```
+
+This pattern must start with the `a` character and can be followed by any number of additional `a` characters, so long as it ends with a `b`.  So `"ab"`, `"aab"`, and `"aaaab"` are all valid, but `"b"` is not.
+
+### Zero Or More (-)
+
+Exactly like the one-or-more operator except it does not require at least one match.  In practice this acts like the "optional" variant of the one-or-more operator. 
