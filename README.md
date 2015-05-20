@@ -96,3 +96,4 @@ Where before it was a one-or-more of "not the double-quote and any character" no
 
 It's true, some of this syntax may look pretty foreign.  But one thing to remember is that this is all C#.  This means that you get all the help that you're used to from C#:
 
+![](https://github.com/kswoll/npeg/blob/master/Docs/PEG1.png?raw=true)
