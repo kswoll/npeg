@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lengths\Length.cs" />
+    <Compile Include="Lengths\LengthTests.cs" />
     <Compile Include="Xml\XmlGrammar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Url\Url.cs" />
