@@ -143,7 +143,23 @@ As you can see, using this syntax it is possible for `Domain()` to recursively c
 
 Now let's take a look at all the expressions you have available to you.
 
-### Sequence (+)
+### Make Expression (`._()`)
+
+Sometimes you have a value that you want to convert into an `Expression`.  For example, you can generally use strings and characters in combination with binary operators where the other operand is already an `Expression`. Often, though, you want to apply operations on a value that isn't already an `Expression`.  For example, suppose you want an expression that connotes "one or more `5` characters".  You can't just write:
+
+``` c#
+var fives = +'5';
+```
+
+This is because the C# expression `'5'` is not an `Expression`, so you can't use the `+` operator on it.  The solution is to use the extension method `_`, available in particular on character and expression expressions.  Thus to make the above code work, you'd write:
+
+``` c#
+var fives = +'5'._()
+```
+
+The `'5'._()` construct says, "first take the c# character `'5'`, transform it into an `Expression` (via `._()`) and then apply the `+` operator on it. In the end we have a one-or-more `Expression` operating against the character `'5'`.
+
+### Sequence (`+`)
 
 A sequence allows you to define a string of expressions that must be satisfied.  It overloads the `+` operator so use it in the same way to concatenate two expressions together.
 
@@ -153,7 +169,7 @@ A sequence allows you to define a string of expressions that must be satisfied. 
 
 This expression would allow any string that starts with a `@` symbol.
 
-### Ordered Choice (|)
+### Ordered Choice (`|`)
 
 The ordered choice allows you to provide a set of possible patterns that will match.  Important: this operator evaluates from left to right.  That means the first match will be chosen, even if there is a potentially better match in a later choice.  As this is C#, it has lower precedence than the sequence `+` operator.  This means that by default (without parentheses) an ordered choice is composed of sequences (or even simpler expressions).  For example,
 
@@ -169,7 +185,7 @@ This pattern allows `"a"` or `"bc"`, but not `"ab"` and not `"bc"`.  In other wo
 
 Now the strings "ac" and "bc" are accepted.
 
-### One Or More (+)
+### One Or More (`+`)
 
 While the same symbol as the Sequence operator, this uses the `+` unary prefix operator, and not the `+` binary operator.  Whatever expression follows the `+` may repeat any number of times but at least one iteration must match.
 
@@ -179,7 +195,7 @@ While the same symbol as the Sequence operator, this uses the `+` unary prefix o
 
 This pattern must start with the `a` character and can be followed by any number of additional `a` characters, so long as it ends with a `b`.  So `"ab"`, `"aab"`, and `"aaaab"` are all valid, but `"b"` is not.
 
-### Zero Or More (-)
+### Zero Or More (`-`)
 
 Exactly like the one-or-more operator except it does not require at least one match.  In practice this acts like the "optional" variant of the one-or-more operator. 
 
@@ -189,7 +205,7 @@ Exactly like the one-or-more operator except it does not require at least one ma
 
 This pattern will accept any number of `a` characters (including none) followed by a `b`.  So `"ab"`, `"aab"`, and `"b"` are all valid.
 
-### Optional (~)
+### Optional (`~`)
 
 Whatever expression follows the operator is considered optional.  This means that if the expression accepts the input, then it is used.  If, however, the expression fails to accept the input, it is ignored and parsing proceeds to the subsequent expression.
 
@@ -199,7 +215,7 @@ Whatever expression follows the operator is considered optional.  This means tha
 
 Here the 'b' is optional so "abc" and "ac" are valid.
  
-### And 
+### And (`.And(...)`)
  
 The operand must be satisfied.  However, even upon success no input is consumed.  Often used at the end of a sequence to verify that the input that follows the current sequence has a certain value.
 
@@ -209,7 +225,7 @@ The operand must be satisfied.  However, even upon success no input is consumed.
 
 Here we say, "allow the sequence of characters `a`, followed by `b`, *and* followed by `c`, but otherwise allowing any other following sequence of characters.
 
-### Not (!)
+### Not (`!`)
 
 The operand must not be satisfied.  If it is satisfied, then the parse fails. In this example, we allow the sequence `"ab"`, but it *must* be followed with `c`. Otherwise, any other following sequence of characters is valid.
 
