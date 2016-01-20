@@ -151,7 +151,7 @@ Sometimes you have a value that you want to convert into an `Expression`.  For e
 var fives = +'5';
 ```
 
-This is because the C# expression `'5'` is not an `Expression`, so you can't use the `+` operator on it.  The solution is to use the extension method `_`, available in particular on character and expression expressions.  Thus to make the above code work, you'd write:
+This is because the C# expression `'5'` is not an `Expression`, so you can't use the `+` operator on it.  The solution is to use the extension method `_`, available in particular on character and string expressions.  Thus to make the above code work, you'd write:
 
 ``` c#
 var fives = +'5'._()
@@ -177,7 +177,7 @@ The ordered choice allows you to provide a set of possible patterns that will ma
 'a' | 'b' + 'c'
 ```
 
-This pattern allows `"a"` or `"bc"`, but not `"ab"` and not `"bc"`.  In other words, it's a choice between `'a'` or `'b'` + `'c'`.  What if we wanted a choice between `'a'` or `'b'` and then plus `'c'`?   Just use parentheses:
+This pattern allows `"a"` or `"bc"`, but not `"ab"` and not `"ac"`.  In other words, it's a choice between `'a'` or `'b'` + `'c'`.  What if we wanted a choice between `'a'` or `'b'` and then plus `'c'`?   Just use parentheses:
 
 ``` c#
 ('a' | 'b') + 'c'
