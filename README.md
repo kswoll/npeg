@@ -18,7 +18,7 @@ some small examples.
 Let's start with a simple pattern that will match a decimal number such as 1, 42, 3.14, -9, etc. First let's create a pattern to handle 1:
 
 ``` c#
-varr pattern = '0'.To('9');
+var pattern = '0'.To('9');
 ```
 
 This creates a pattern that accepts any character between 0 and 9, in other words, a digit.  To test this pattern for 1 we simply call the Match(...) method:
