@@ -6,3 +6,4 @@ PEG.Tests/bin/
 PEG.Samples/obj/
 PEG.Samples/bin/
 *.DS_Store
+packages/

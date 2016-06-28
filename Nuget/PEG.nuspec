@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>PEG</id>
+    <version>1.0.3</version>
+    <authors>kirk</authors>
+    <owners>kirk</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>https://github.com/kswoll/npeg</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This parser is an implementation of a Packrat Parser with support for left-recursion. The algorithm for left recursion is a modified version of Packrat parsers can support left recursion.</description>
+    <releaseNotes>Fix proxy class when handling subclassing.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>peg parser c#</tags>
+  </metadata>
+</package>

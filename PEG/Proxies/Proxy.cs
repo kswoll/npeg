@@ -8,20 +8,20 @@ namespace PEG.Proxies
 {
     /// <summary>
     /// Generates proxies for the following usage scenarios:<ul>
-    /// 
+    ///
     /// <li>Create a proxy on a base class where the proxy class should override virtual methods
-    ///     in the base class, making those methods available to the proxy.  In this context, 
+    ///     in the base class, making those methods available to the proxy.  In this context,
     ///     Invocation.Proceed invokes the base method implementation.</li>
-    /// 
-    /// <li>Create a proxy on an interface while supplying a target implementation of that 
+    ///
+    /// <li>Create a proxy on an interface while supplying a target implementation of that
     ///     interface.  In this context, Invocation.Proceed invokes the method on the provided
     ///     target.</li>
-    /// 
-    /// <li>Create a proxy on an interface, not providing any target.  In this context, 
+    ///
+    /// <li>Create a proxy on an interface, not providing any target.  In this context,
     ///     Invocation.Proceed does nothing.</li>
-    /// 
+    ///
     /// </ul>
-    /// 
+    ///
     /// <b>Note:</b> Generated implementations are stored in a static field of the generic
     /// Proxy&lt;T&gt; class.  These are instantiated upon first access of a particular
     /// variant of that class (variant on the type argument), which solves any thread
@@ -31,17 +31,17 @@ namespace PEG.Proxies
     {
         /// <summary>
         /// Creates a proxy for a given type.  This method supports two discrete usage scenarios.<p/>
-        /// If T is an interface, the target should be an implementation of that interface. In 
+        /// If T is an interface, the target should be an implementation of that interface. In
         /// this scenario, T should be <i>explicitly</i> specified unless the type of <i>target</i>
         /// at the calling site is of that interface.  In other words, if the calling site has the
         /// <i>target</i> declared as the concrete implementation, the proxy will be generated
         /// for the implementation, rather than for the interface.
-        /// 
-        /// If T is a class, the target should be an instance of that class, and a subclassing 
-        /// proxy will be created for it.  However, because target is specified in this case, 
+        ///
+        /// If T is a class, the target should be an instance of that class, and a subclassing
+        /// proxy will be created for it.  However, because target is specified in this case,
         /// the base class behavior will be ignored (it will all be delegated to the target).
         /// </summary>
-        /// <typeparam name="T">The type to create the proxy for.  May be an interface or a 
+        /// <typeparam name="T">The type to create the proxy for.  May be an interface or a
         /// concrete base class.</typeparam>
         /// <param name="target">The instance of T that should be the recipient of all invocations
         /// on the proxy via Invocation.Proceed.</param>
@@ -53,11 +53,11 @@ namespace PEG.Proxies
         }
 
         /// <summary>
-        /// Creates a proxy for a given type.  This overload does not accept a target.  If T is 
+        /// Creates a proxy for a given type.  This overload does not accept a target.  If T is
         /// an interface, then calls to Proceed will do nothing.  If T is a class, calls to Proceed
         /// will invoke the base class behavior.
         /// </summary>
-        /// <typeparam name="T">The type to create the proxy for.  May be an interface or a 
+        /// <typeparam name="T">The type to create the proxy for.  May be an interface or a
         /// concrete base class.</typeparam>
         /// <param name="invocationHandler"></param>
         /// <returns>The new instance of the proxy that is an instance of T</returns>
@@ -90,7 +90,7 @@ namespace PEG.Proxies
             string assemblyName = typeof(T).FullName + "__Proxy";
 
             AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
-            ModuleBuilder module = assembly.DefineDynamicModule(assemblyName);
+            ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, @"temp.module.dll");
             bool isIntf = typeof(T).IsInterface;
 
             Type baseType = isIntf ? typeof(object) : typeof(T);
@@ -133,6 +133,8 @@ namespace PEG.Proxies
 
                 // Finalize doesn't work if we try to proxy it and really, who cares?
                 if (methodInfo.Name == "Finalize" && parameterInfos.Length == 0 && methodInfo.DeclaringType == typeof(object))
+                    continue;
+                if (methodInfo.Name == "OnCreated")
                     continue;
 
                 if (isIntf || methodInfo.IsVirtual)
@@ -196,11 +198,13 @@ namespace PEG.Proxies
                     // Decompose array into arguments
                     for (int i = 0; i < parameterInfos.Length; i++)
                     {
-                        proceedIl.Emit(OpCodes.Ldarg, (short)1);            // Push array 
+                        proceedIl.Emit(OpCodes.Ldarg, (short)1);            // Push array
                         proceedIl.Emit(OpCodes.Ldc_I4, i);                  // Push element index
                         proceedIl.Emit(OpCodes.Ldelem, typeof(object));     // Get element
                         if (parameterInfos[i].ParameterType.IsValueType)
                             proceedIl.Emit(OpCodes.Unbox_Any, parameterInfos[i].ParameterType);
+                        else
+                            proceedIl.Emit(OpCodes.Castclass, parameterInfos[i].ParameterType);
                     }
 
                     proceedIl.Emit(isIntf ? OpCodes.Callvirt : OpCodes.Call, methodInfo);
@@ -282,6 +286,9 @@ namespace PEG.Proxies
             staticIl.Emit(OpCodes.Ret);
 
             Type proxyType = type.CreateType();
+
+            assembly.Save("test.dll");
+
             return proxyType;
         }
     }

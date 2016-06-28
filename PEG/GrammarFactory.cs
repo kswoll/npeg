@@ -9,10 +9,11 @@ namespace PEG
 {
     public class GrammarFactory<T> where T : Grammar<T>
     {
-        public static T Create()
+        public static T Create(object[] args)
         {
             GrammarFactory<T> factory = new GrammarFactory<T>();
             T result = Proxy.CreateProxy<T>(factory.InvocationHandler);
+            result.NotifyCreated(args);
 
             int nonterminalIndex = 0;
 

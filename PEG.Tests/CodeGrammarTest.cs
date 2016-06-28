@@ -72,7 +72,7 @@ namespace PEG.Tests
             {
                 return ~LetterA();
             }
-            
+
             public virtual Expression TwoSequences()
             {
                 return LetterA() + LetterB() | LetterB() + LetterA();

@@ -40,11 +40,20 @@ namespace PEG
 
     public class Grammar<T> : Grammar where T : Grammar<T>
     {
-        public static T Create()
+        public static T Create(params object[] args)
         {
-            Grammar<T> grammar = GrammarFactory<T>.Create();
+            Grammar<T> grammar = GrammarFactory<T>.Create(args);
             grammar.Initialize();
             return (T)grammar;
+        }
+
+        internal void NotifyCreated(object[] args)
+        {
+            OnCreated(args);
+        }
+
+        protected virtual void OnCreated(object[] args)
+        {
         }
 
         public void Initialize()
