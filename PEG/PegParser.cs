@@ -22,12 +22,12 @@ namespace PEG
             StartExpression = startExpression;
         }
 
-        public IEnumerable<OutputRecord> ParseString(string input)
+        public IEnumerable<OutputRecord> ParseString(string input, bool requireCompleteParse = true)
         {
             LrParseEngine parseEngine = new LrParseEngine(Grammar, input);
             Expression startExpression = StartExpression ?? Grammar.StartExpression;
             IEnumerable<OutputRecord> outputRecords = startExpression.Execute(parseEngine);
-            if (outputRecords != null && ((outputRecords.Any() && parseEngine.Position < input.Length) || !outputRecords.Any()))
+            if (outputRecords != null && ((outputRecords.Any() && parseEngine.Position < input.Length && requireCompleteParse) || !outputRecords.Any()))
                 outputRecords = null;
             return outputRecords;
         }
@@ -107,7 +107,7 @@ namespace PEG
         private LrParseEngine CreateParseEngine(string input)
         {
             LrParseEngine parseEngine;
-            if (Grammar.Tokenizer != null) 
+            if (Grammar.Tokenizer != null)
             {
                 parseEngine = Tokenize(input);
             }
@@ -145,11 +145,11 @@ namespace PEG
                 // then the current character is not part of a valid token.  Rather than
                 // considering this an error, we will just add the character into the next
                 // input stream as-is -- as a CharacterTerminal.  This is useful for tokens
-                // that are context sensitive.  An example is the C# shift-right operator 
-                // together with closing two generic types at once.  Both will make use of 
-                // the character sequence ">>".  However, in the case of the shift-right 
-                // operation, the "token" should be the full "<<" -- both characters.  On 
-                // the other hand, when closing a generic type, the token should be a single 
+                // that are context sensitive.  An example is the C# shift-right operator
+                // together with closing two generic types at once.  Both will make use of
+                // the character sequence ">>".  However, in the case of the shift-right
+                // operation, the "token" should be the full "<<" -- both characters.  On
+                // the other hand, when closing a generic type, the token should be a single
                 // '>' (followed in this case by another '>' immediately after.)  The best way
                 // to disambiguate this situation is to not create a token and allow the full
                 // grammar to treat the actual characters (hence the full grammar will actually

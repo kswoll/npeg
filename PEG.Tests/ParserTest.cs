@@ -72,7 +72,7 @@ namespace PEG.Tests
             {
                 return ~LetterA();
             }
-            
+
             public virtual Expression TwoSequences()
             {
                 return LetterA() + LetterB() | LetterB() + LetterA();
@@ -101,7 +101,7 @@ namespace PEG.Tests
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.LetterA()));
             Assert.IsNotNull(parser.ParseString("a"));
             Assert.IsNull(parser.ParseString("b"));
-        } 
+        }
 
         [Test]
         public void LetterChoice()
@@ -111,7 +111,7 @@ namespace PEG.Tests
             Assert.IsNotNull(parser.ParseString("a"));
             Assert.IsNotNull(parser.ParseString("b"));
             Assert.IsNull(parser.ParseString("c"));
-        } 
+        }
 
         [Test]
         public void NonterminalAndLetterChoice()
@@ -121,7 +121,7 @@ namespace PEG.Tests
             Assert.IsNotNull(parser.ParseString("a"));
             Assert.IsNotNull(parser.ParseString("b"));
             Assert.IsNull(parser.ParseString("c"));
-        } 
+        }
 
         [Test]
         public void NonterminalAndNonterminalChoice()
@@ -131,7 +131,7 @@ namespace PEG.Tests
             Assert.IsNotNull(parser.ParseString("a"));
             Assert.IsNotNull(parser.ParseString("b"));
             Assert.IsNull(parser.ParseString("c"));
-        } 
+        }
 
         [Test]
         public void LetterSequence()
@@ -141,7 +141,7 @@ namespace PEG.Tests
             Assert.IsNotNull(parser.ParseString("ab"));
             Assert.IsNull(parser.ParseString("a"));
             Assert.IsNull(parser.ParseString("b"));
-        } 
+        }
 
         [Test]
         public void NotLetterA()
@@ -149,17 +149,17 @@ namespace PEG.Tests
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.NotLetterA()));
             Assert.IsNull(parser.ParseString("a"));
-            Assert.IsNotNull(parser.ParseString("b"));
-        } 
+            Assert.IsNotNull(parser.ParseString("b", false));
+        }
 
         [Test]
         public void AndLetterA()
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.AndLetterA()));
-            Assert.IsNotNull(parser.ParseString("a"));
+            Assert.IsNotNull(parser.ParseString("a", false));
             Assert.IsNull(parser.ParseString("b"));
-        } 
+        }
 
         [Test]
         public void OneOrMoreLetterA()
@@ -171,7 +171,7 @@ namespace PEG.Tests
             Assert.IsNotNull(parser.ParseString("aaa"));
             Assert.IsNull(parser.ParseString("b"));
             Assert.IsNull(parser.ParseString(""));
-        } 
+        }
 
         [Test]
         public void ZeroOrMoreLetterA()
@@ -182,7 +182,7 @@ namespace PEG.Tests
             Assert.IsNotNull(parser.ParseString("a"));
             Assert.IsNotNull(parser.ParseString("aa"));
             Assert.IsNotNull(parser.ParseString("aaa"));
-        } 
+        }
 
         [Test]
         public void LeftRecursion()
@@ -192,6 +192,6 @@ namespace PEG.Tests
             Assert.IsNotNull(parser.ParseString("a"));
             Assert.IsNotNull(parser.ParseString("aa"));
             Assert.IsNotNull(parser.ParseString("aaa"));
-        } 
+        }
     }
 }
