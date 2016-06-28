@@ -26,8 +26,7 @@ namespace PEG.Samples.Lengths
         {
             var s = "5' 4\"";
             var length = Length.Parse(s);
-            Assert.AreEqual(5, length.Feet);
-            Assert.AreEqual(4, length.Inches);
+            Assert.AreEqual(64, length.Inches);
         }
     }
 }
