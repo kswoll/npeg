@@ -8,7 +8,7 @@ namespace PEG.Cst
     {
         public static CstNonterminalNode Build(IEnumerable<OutputRecord> outputStream)
         {
-            if (!outputStream.Any())
+            if (outputStream == null || !outputStream.Any())
                 return null;
 
             Stack<CstNonterminalNode> stack = new Stack<CstNonterminalNode>();

@@ -12,9 +12,9 @@ namespace PEG
         {
             if (from == '(' && to == ')')
             {
-                char[] symbols = new[]
+                char[] symbols =
                 {
-                    '-', '\'', '\\', '`', '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '=', '+', '[', 
+                    '-', '\'', '\\', '`', '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '=', '+', '[',
                     ']', '{', '}', '|', ';', ':', '\"', '<', '>', ',', '.', '/', '?'
                 };
                 return new CharacterRange(from, to, symbols.Select(x => (CharacterTerminal)x));
@@ -47,16 +47,16 @@ namespace PEG
         /// </summary>
         public static bool Contains(this Expression expression, string input)
         {
-            var _expression = +(expression | new AnyCharacter(false));
-            var parser = CreateParser(_expression);
+            var exp = +(expression | new AnyCharacter(false));
+            var parser = CreateParser(exp);
             IEnumerable<OutputRecord> outputRecords = parser.ParseString(input);
             return outputRecords.Skip(2).Any();     // Skip begin/end of implicit root nonterminal
         }
 
         /// <summary>
-        /// PEG requires that the nonterminals be indexed in so that they may be accessed 
+        /// PEG requires that the nonterminals be indexed in so that they may be accessed
         /// quickly from an array.  Compiling the expression will ensure all nonterminals
-        /// contained in the expression (and its descendents) are properly indexed.  
+        /// contained in the expression (and its descendents) are properly indexed.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
@@ -88,7 +88,7 @@ namespace PEG
         }
 
         /// <summary>
-        /// Replaces all occurances of the pattern within input according to the definition provided 
+        /// Replaces all occurances of the pattern within input according to the definition provided
         /// by replacements.
         /// </summary>
         public static string Replace(this Expression expression, string input, params Replacement[] replacements)
@@ -98,9 +98,9 @@ namespace PEG
                 expression = expression.Capture();
 
             // Modify the expression to allow any character (allows matching substrings)
-            var _expression = +(expression | new AnyCharacter(true));
+            var exp = +(expression | new AnyCharacter(true));
 
-            var parser = CreateParser(_expression);
+            var parser = CreateParser(exp);
 
             var output = parser.ParseString(input);
             if (!output.Any())
@@ -122,7 +122,7 @@ namespace PEG
                 }
                 else
                 {
-                    transformedCst.Children.Add(child);                    
+                    transformedCst.Children.Add(child);
                 }
             }
 
@@ -134,7 +134,7 @@ namespace PEG
             Grammar grammar = new Grammar();
             var nonterminal = expression is Nonterminal ? (Nonterminal)expression : new Nonterminal(expression);
             grammar.Nonterminals.AddRange(nonterminal.Enumerate().OfType<Nonterminal>());
-            
+
             // Compile is necessary to ensure nonterminals have valid indices
             nonterminal.Compile();
 
@@ -163,7 +163,7 @@ namespace PEG
         }
 
         /// <summary>
-        /// Shortcut for character terminals.  'a'._() converts 'a' into the CharacterTerminal 
+        /// Shortcut for character terminals.  'a'._() converts 'a' into the CharacterTerminal
         /// expression representing the character 'a'.  This is a common operation and this seems
         /// like the most concise of representing it.
         /// </summary>
@@ -179,7 +179,7 @@ namespace PEG
 
         /// <summary>
         /// Returns a Nonterminal that references the current expression, giving it the specified
-        /// name.  Nonterminals are the only structure that retains structural meaning after 
+        /// name.  Nonterminals are the only structure that retains structural meaning after
         /// parsing (i.e. it has representation in the output stream / CST.)  Thus, if you ever
         /// need to do something to your parse result by referring to elements in your pattern,
         /// this is how you can solidify them.
@@ -193,9 +193,9 @@ namespace PEG
         }
 
         /// <summary>
-        /// Returns a Nonterminal that references the current expression.  Nonterminals are 
-        /// the only structure that retains structural meaning after parsing (i.e. it 
-        /// has representation in the output stream / CST.)  Thus, if you ever need to do 
+        /// Returns a Nonterminal that references the current expression.  Nonterminals are
+        /// the only structure that retains structural meaning after parsing (i.e. it
+        /// has representation in the output stream / CST.)  Thus, if you ever need to do
         /// something to your parse result by referring to elements in your pattern,
         /// this is how you can solidify them.
         /// </summary>

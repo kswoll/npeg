@@ -227,7 +227,7 @@ Here we say, "allow the sequence of characters `a`, followed by `b`, *and* follo
 
 ### Not (`!`)
 
-The operand must not be satisfied.  If it is satisfied, then the parse fails. In this example, we allow the sequence `"ab"`, but it *must* be followed with `c`. Otherwise, any other following sequence of characters is valid.
+The operand must not be satisfied.  If it is satisfied, then the parse fails. In this example, we allow the sequence `"ab"`, but it *must not* be followed with `c`. Otherwise, any other following sequence of characters is valid.
 
 ``` c#
 'a'._() + 'b' + !'c'._() + +Peg.Any

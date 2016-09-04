@@ -66,6 +66,7 @@
     <Compile Include="LambdaGrammarTest.cs" />
     <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QutoedStringTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PEG\PEG.csproj">
