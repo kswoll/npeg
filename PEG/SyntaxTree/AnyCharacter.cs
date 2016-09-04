@@ -32,5 +32,10 @@ namespace PEG.SyntaxTree
         {
             visitor.Visit(this, context);
         }
+
+        public override string ToString()
+        {
+            return "Any";
+        }
     }
 }

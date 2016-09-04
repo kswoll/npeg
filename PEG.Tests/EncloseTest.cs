@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using PEG.SyntaxTree;
+using static PEG.Peg;
 
 namespace PEG.Tests
 {
@@ -9,7 +9,7 @@ namespace PEG.Tests
         [Test]
         public void SimpleQuotes()
         {
-            Assert.IsTrue('"'._().Enclose(-'*'.Any()).Match("\"Hello\""));
+            Assert.IsTrue('"'.Enclose(-Any).Match("\"Hello\""));
         }
     }
 }

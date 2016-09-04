@@ -241,6 +241,16 @@ namespace PEG
             return andPredicate;
         }
 
+        public static EncloseExpression Enclose(this char enclosure, Expression operand)
+        {
+            return enclosure._().Enclose(operand);
+        }
+
+        public static EncloseExpression Enclose(this string enclosure, Expression operand)
+        {
+            return enclosure._().Enclose(operand);
+        }
+
         public static EncloseExpression Enclose(this Expression enclosure, Expression operand)
         {
             EncloseExpression enclose = new EncloseExpression();

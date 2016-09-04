@@ -80,7 +80,7 @@ namespace PEG.Builder
         public T Build(CstNonterminalNode rootNode)
         {
             object astNode = Build(typeof(T), rootNode);
-            return (T)astNode;            
+            return (T)astNode;
         }
 
         public Func<Type, object> Factory
@@ -122,12 +122,12 @@ namespace PEG.Builder
             if (searchSubclasses)
             {
                 Type[] subclasses = type.Assembly.GetTypes().Where(o => o != type && type.IsAssignableFrom(o)).ToArray();
-                subclasses.Foreach(o => WalkTypeForNonTerminals(o, checkedTypes, searchSubclasses));                
+                subclasses.Foreach(o => WalkTypeForNonTerminals(o, checkedTypes, searchSubclasses));
             }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="astNodeType">The type of node we are creating.  A subclass might possibly be selected.</param>
         /// <param name="cstNode">The CST node that represents the structured input for the specified AST node</param>
@@ -145,7 +145,26 @@ namespace PEG.Builder
             object astNode;
             try
             {
-                astNode = CreateAstNode(astNodeType);
+                if (astNodeType == typeof(string))
+                    return cstNode.Coalesce();
+                else if (astNodeType == typeof(int))
+                    return int.Parse(cstNode.Coalesce());
+                else if (astNodeType == typeof(byte))
+                    return byte.Parse(cstNode.Coalesce());
+                else if (astNodeType == typeof(short))
+                    return short.Parse(cstNode.Coalesce());
+                else if (astNodeType == typeof(long))
+                    return long.Parse(cstNode.Coalesce());
+                else if (astNodeType == typeof(float))
+                    return float.Parse(cstNode.Coalesce());
+                else if (astNodeType == typeof(double))
+                    return double.Parse(cstNode.Coalesce());
+                else if (astNodeType == typeof(decimal))
+                    return decimal.Parse(cstNode.Coalesce());
+                else if (astNodeType == typeof(bool))
+                    return bool.Parse(cstNode.Coalesce());
+                else
+                    astNode = CreateAstNode(astNodeType);
             }
             catch (Exception e)
             {
@@ -171,7 +190,7 @@ namespace PEG.Builder
                     try
                     {
                         newCstNode = expression != null ? expression.Resolve(productionNode).FirstOrDefault() : productionNode;
-                    } 
+                    }
                     catch (Exception e)
                     {
                         throw new InvalidOperationException("Error resolving expression '" + consumeAttribute.Expression + "' for " + property.GetPath(), e);
@@ -179,7 +198,7 @@ namespace PEG.Builder
 
                     // There are a number of reasons why the new cst node might be null.  It is perfectly
                     // legal to specify nonterminal expressions that only resolve under certain productions.
-                    // In other scenarios, it will remain null.  
+                    // In other scenarios, it will remain null.
                     if (newCstNode != null)
                     {
                         // If the Value property is set, then we simply assign the property to that value (since newCstNode is not null)
@@ -223,12 +242,12 @@ namespace PEG.Builder
             {
                 Coalesce(astNode, property, newCstNode, property.PropertyType);
             }
-            // Lists are a special case to help unravel recursion.  
+            // Lists are a special case to help unravel recursion.
             else if (property.PropertyType.IsGenericList())
             {
                 BuildList(property, astNode, (CstNonterminalNode)newCstNode);
             }
-            // Each enum value may contain a ConsumeAttribute indicating how to map it. Otherwise we do 
+            // Each enum value may contain a ConsumeAttribute indicating how to map it. Otherwise we do
             // a simple parse.
             else if (property.PropertyType.IsEnum)
             {
@@ -266,7 +285,7 @@ namespace PEG.Builder
 
                 // Set the property to the new AST node
                 property.SetValue(astNode, newAstNode, null);
-            }            
+            }
         }
 
         private object CreateAstNode(Type astNodeType)
@@ -283,7 +302,7 @@ namespace PEG.Builder
         {
             return simpleTypes.Contains(type);
         }
-        
+
         private void Coalesce(object astNode, PropertyInfo property, ICstNode cstNode, Type targetType)
         {
             string value = cstNode.Coalesce();
@@ -296,7 +315,7 @@ namespace PEG.Builder
             {
                 throw new InvalidOperationException("Error converting '" + value + "' to a " + targetType.FullName + " for property " + property.GetPath(), e);
             }
-            property.SetValue(astNode, o, null);                                        
+            property.SetValue(astNode, o, null);
         }
 
 /*
@@ -305,7 +324,7 @@ namespace PEG.Builder
             string value = cstNode.Coalesce();
             ITypeConverter converter = (ITypeConverter)Activator.CreateInstance(typeConverter);
             object o = converter.Convert(value, property.PropertyType, converterArgs);
-            property.SetValue(astNode, o, null);                                        
+            property.SetValue(astNode, o, null);
         }
 */
 
@@ -316,7 +335,7 @@ namespace PEG.Builder
             {
                 result = result.Concat(exp.Resolve(node).Cast<ICstNonterminalNode>());
             }
-            return result;            
+            return result;
         }
 
         private IEnumerable<ICstNonterminalNode> GetChildrenByNonterminal(ICstNonterminalNode node, Nonterminal nonterminal)
@@ -367,7 +386,7 @@ namespace PEG.Builder
                     object listItemAstNode = Build(listType, childNode);
                     list.Add(listItemAstNode);
                 }
-                property.SetValue(astNode, list, null);                
+                property.SetValue(astNode, list, null);
             }
             else
             {
@@ -376,7 +395,7 @@ namespace PEG.Builder
 
                 object listItemAstNode = Build(listType, cstNode);
                 list.Add(listItemAstNode);
-                property.SetValue(astNode, list, null);                
+                property.SetValue(astNode, list, null);
             }
         }
 

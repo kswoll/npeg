@@ -24,14 +24,18 @@ namespace PEG.SyntaxTree
             };
 
             engine.AddInterceptor(predicate);
+            try
+            {
+                var operandResult = Operand.Execute(engine);
+                if (engine.IsFailure(operandResult))
+                    return operandResult;
 
-            var operandResult = Operand.Execute(engine);
-            if (engine.IsFailure(operandResult))
-                return operandResult;
-
-            current = current.Concat(operandResult);
-
-            engine.RemoveInterceptor(predicate);
+                current = current.Concat(operandResult);
+            }
+            finally
+            {
+                engine.RemoveInterceptor(predicate);
+            }
 
             var closeResult = Enclosure.Execute(engine);
             if (engine.IsFailure(closeResult))
