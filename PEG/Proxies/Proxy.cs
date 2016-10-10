@@ -89,8 +89,8 @@ namespace PEG.Proxies
         {
             string assemblyName = typeof(T).FullName + "__Proxy";
 
-            AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
-            ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, @"temp.module.dll");
+            AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+            ModuleBuilder module = assembly.DefineDynamicModule(assemblyName);
             bool isIntf = typeof(T).IsInterface;
 
             Type baseType = isIntf ? typeof(object) : typeof(T);
@@ -164,7 +164,6 @@ namespace PEG.Proxies
                     proceedIl.Emit(OpCodes.Dup);
 
                     var targetNotNull = proceedIl.DefineLabel();
-//                    var returnFromMethod = proceedIl.DefineLabel();
 
                     // If target is null, we will do a base method invocation, if possible
                     proceedIl.Emit(OpCodes.Brtrue, targetNotNull);
@@ -286,8 +285,6 @@ namespace PEG.Proxies
             staticIl.Emit(OpCodes.Ret);
 
             Type proxyType = type.CreateType();
-
-            assembly.Save("test.dll");
 
             return proxyType;
         }
