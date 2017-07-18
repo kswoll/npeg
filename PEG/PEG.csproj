@@ -92,7 +92,6 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="FirstSet.cs" />
     <Compile Include="Grammar.cs" />
     <Compile Include="GrammarFactory.cs" />
     <Compile Include="IParseInput.cs" />
@@ -105,6 +104,7 @@
     <Compile Include="ParseEngine.cs" />
     <Compile Include="ParseError.cs" />
     <Compile Include="ParseException.cs" />
+    <Compile Include="ParseMark.cs" />
     <Compile Include="Peg.cs" />
     <Compile Include="PegParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -117,7 +117,6 @@
     <Compile Include="StringReplacementTarget.cs" />
     <Compile Include="SyntaxTree\AndPredicate.cs" />
     <Compile Include="SyntaxTree\AnyCharacter.cs" />
-    <Compile Include="SyntaxTree\AnyCharacterTerminal.cs" />
     <Compile Include="SyntaxTree\CharacterRange.cs" />
     <Compile Include="SyntaxTree\CharacterSet.cs" />
     <Compile Include="SyntaxTree\CharacterTerminal.cs" />
@@ -128,10 +127,11 @@
     <Compile Include="SyntaxTree\IExpressionVisitor.cs" />
     <Compile Include="SyntaxTree\Nonterminal.cs" />
     <Compile Include="SyntaxTree\NotPredicate.cs" />
-    <Compile Include="SyntaxTree\NullTerminal.cs" />
     <Compile Include="SyntaxTree\OneOrMore.cs" />
     <Compile Include="SyntaxTree\Optional.cs" />
     <Compile Include="SyntaxTree\OrderedChoice.cs" />
+    <Compile Include="SyntaxTree\ParseOutput.cs" />
+    <Compile Include="SyntaxTree\ParseOutputSpan.cs" />
     <Compile Include="SyntaxTree\Repeat.cs" />
     <Compile Include="SyntaxTree\Substitution.cs" />
     <Compile Include="SyntaxTree\Sequence.cs" />

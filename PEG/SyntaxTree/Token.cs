@@ -19,26 +19,21 @@ namespace PEG.SyntaxTree
             AbsoluteIndex = absoluteIndex;
         }
 
-        public Nonterminal Nonterminal
-        {
-            get { return TokenRule; }
-        }
+        public Nonterminal Nonterminal => TokenRule;
 
-        public List<ICstNode> Children
-        {
-            get { return Cst.Children; }
-        }
+        public List<ICstNode> Children => Cst.Children;
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
             if (engine.Current is Token && ((Token)engine.Current).TokenRule == TokenRule)
             {
+                var position = engine.Position;
                 if (engine.Consume())
-                    return AsResult(engine.Position);                
+                    return OutputResult(engine.Output, position);
                 else
-                    return null;
+                    return engine.False;
             }
-            return null;
+            return engine.False;
         }
 
         public override string Coalesce()

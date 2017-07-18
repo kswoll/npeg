@@ -7,10 +7,10 @@ using PEG.Utils;
 namespace PEG
 {
     /// <summary>
-    /// Implements the memoization algorithm for grammar rules that forms the core of the PEG parser. 
-    /// The characteristics of the individual operators of the syntax are implemented in the classes in 
+    /// Implements the memoization algorithm for grammar rules that forms the core of the PEG parser.
+    /// The characteristics of the individual operators of the syntax are implemented in the classes in
     /// the syntax tree.  (Common.Core.Parsing.Peg.SyntaxTree)  The Nonterminal class enjoys a special
-    /// relationship with this class, and directly invokes the ApplyNonterminal method to implement its 
+    /// relationship with this class, and directly invokes the ApplyNonterminal method to implement its
     /// behavior.  ParseEngine in turn calls back into the Nonterminal.Eval method, allowing that class
     /// to handle the bookkeeping of writing the begin and end markers to the output stream.
     /// </summary>
@@ -21,8 +21,10 @@ namespace PEG
         /// </summary>
         public string RawInput { get; set; }
 
+        public ParseOutput Output { get; set; }
+
         /// <summary>
-        /// The grammar 
+        /// The grammar
         /// </summary>
         public Grammar Grammar { get; set; }
 
@@ -30,7 +32,7 @@ namespace PEG
         /// An implementation of IParseInput that could either represent a raw text input, or the
         /// result of a tokenization pass.
         /// </summary>
-        public IParseInput Input { get; private set; }
+        public IParseInput Input { get; }
 
         /// <summary>
         /// The current position within Input.
@@ -43,14 +45,14 @@ namespace PEG
         public int Depth { get; protected set; }
 
         /// <summary>
-        /// Sometimes a Terminal can be created on the fly (for example, when using the AnyCharacter 
+        /// Sometimes a Terminal can be created on the fly (for example, when using the AnyCharacter
         /// expression.)  This allows those terminals to still be cached and avoid recreating tons
         /// of terminals for the same character.
         /// </summary>
         public DynamicArray<Terminal> TerminalsCache { get; private set; }
 
         /// <summary>
-        /// The heart of any PEG parser, this is the memo table that caches the results of every possible 
+        /// The heart of any PEG parser, this is the memo table that caches the results of every possible
         /// invocation of a nonterminal at a given position.  The first index is the nonterminal, and the
         /// second index is the position in the input.
         /// </summary>
@@ -64,6 +66,8 @@ namespace PEG
 
         public bool IsLogEnabled { get; set; }
 
+        public ParseOutputSpan False => new ParseOutputSpan(false, Position, Position);
+
         private List<Func<IEnumerable<OutputRecord>>> interceptorStack = new List<Func<IEnumerable<OutputRecord>>>();
 
         public ParseEngine(Grammar grammar, string input)
@@ -71,7 +75,7 @@ namespace PEG
             Grammar = grammar;
             Input = new StringParseInput(this, input);
             RawInput = input;
-            Init();            
+            Init();
         }
 
         public ParseEngine(Grammar grammar, string rawInput, IParseInput input)
@@ -85,7 +89,7 @@ namespace PEG
         private void Init()
         {
             TerminalsCache = new DynamicArray<Terminal>();
-            MemoTable = new MemoEntry[Input.Length + 1, Grammar.Nonterminals.Count];            
+            MemoTable = new MemoEntry[Input.Length + 1, Grammar.Nonterminals.Count];
             IsLogEnabled = true;
         }
 
@@ -111,13 +115,13 @@ namespace PEG
         }
 
         /// <summary>
-        /// Abstracts the idea of marking and resetting in case we ever need to keep track of 
+        /// Abstracts the idea of marking and resetting in case we ever need to keep track of
         /// more than the position.  (for now, merely returns the position)
         /// </summary>
         /// <returns></returns>
-        public int Mark()
+        public ParseMark Mark()
         {
-            return Position;
+            return new ParseMark(Position, Output.Count);
         }
 
         private bool isIntercepting;
@@ -149,13 +153,14 @@ namespace PEG
         }
 
         /// <summary>
-        /// Restores the state of the parser to the previous mark.  (for now, merely restores the 
+        /// Restores the state of the parser to the previous mark.  (for now, merely restores the
         /// Position)
         /// </summary>
         /// <param name="mark"></param>
-        public void Reset(int mark)
+        public void Reset(ParseMark mark)
         {
-            Position = mark;
+            Position = mark.InputPosition;
+            Output.Reset(mark.OutputPosition);
         }
 
         /// <summary>
@@ -189,15 +194,6 @@ namespace PEG
             }
         }
 
-        /// <summary>
-        /// Returns true if output is null.  Subclasses can override this method to
-        /// expand on the definition of a failure.
-        /// </summary>
-        public virtual bool IsFailure(IEnumerable<OutputRecord> output)
-        {
-            return output == null;
-        }
-
         public void AddInterceptor(Func<IEnumerable<OutputRecord>> expression)
         {
             interceptorStack.Add(expression);
@@ -206,6 +202,11 @@ namespace PEG
         public void RemoveInterceptor(Func<IEnumerable<OutputRecord>> expression)
         {
             interceptorStack.Remove(expression);
+        }
+
+        public ParseOutputSpan Return(ParseMark mark)
+        {
+            return new ParseOutputSpan(false, mark.OutputPosition, Output.Count);
         }
     }
 }

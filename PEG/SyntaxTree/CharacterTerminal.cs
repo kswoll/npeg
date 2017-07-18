@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-
 namespace PEG.SyntaxTree
 {
     public class CharacterTerminal : Terminal
     {
-        public char Character { get; private set; }
+        public char Character { get; }
 
         public CharacterTerminal(char character)
         {
@@ -21,16 +19,21 @@ namespace PEG.SyntaxTree
             return Character.ToString();
         }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
             if (Equals(engine.Current))
             {
+                var position = engine.Position;
                 if (engine.Consume())
-                    return AsResult(engine.Position);
+                {
+                    return OutputResult(engine.Output, position);
+                }
                 else
-                    return null;
+                {
+                    return engine.False;
+                }
             }
-            return null;
+            return engine.False;
         }
 
         public bool Equals(CharacterTerminal other)

@@ -5,14 +5,12 @@ namespace PEG.SyntaxTree
 {
     public abstract class Terminal : Expression, ICstTerminalNode
     {
-        Terminal ICstTerminalNode.Terminal
-        {
-            get { return this; }
-        }
+        Terminal ICstTerminalNode.Terminal => this;
 
-        public IEnumerable<OutputRecord> AsResult(int position)
+        public ParseOutputSpan OutputResult(ParseOutput output, int position)
         {
-            yield return new OutputRecord(this, position);
+            output.Add(new OutputRecord(this, position));
+            return new ParseOutputSpan(true, position, position + 1);
         }
 
         public abstract string Coalesce();

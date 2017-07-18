@@ -172,12 +172,12 @@ namespace PEG
             enumerator.MoveNext();  // Now at beginning
             enumerator.MoveNext();  // Now past first entry
 
-            OutputRecord last = null;
-            OutputRecord secondLast = null;
+            OutputRecord? last = null;
+            OutputRecord? secondLast = null;
             while (enumerator.MoveNext())
             {
                 if (secondLast != null)
-                    yield return secondLast;
+                    yield return (secondLast ?? default(OutputRecord));
                 secondLast = last;
                 last = enumerator.Current;
             }

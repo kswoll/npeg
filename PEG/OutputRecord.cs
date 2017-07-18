@@ -5,14 +5,15 @@ namespace PEG
 {
     public enum OutputType { None, Begin, End }
 
-    public class OutputRecord
+    public struct OutputRecord
     {
-        public OutputType OutputType { get; set; }
-        public Expression Expression { get; set; }
-        public int Position { get; set;}
+        public OutputType OutputType { get; }
+        public Expression Expression { get; }
+        public int Position { get; }
 
         public OutputRecord(Terminal expression, int position)
         {
+            OutputType = OutputType.None;
             Expression = expression;
             Position = position;
         }

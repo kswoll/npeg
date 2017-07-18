@@ -1,20 +1,18 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace PEG.SyntaxTree
 {
     /// <summary>
-    /// Base class for all PEG expressions.  
-    /// 
-    /// The operator overloading contained here attempts to approximate the actual PEG grammar within 
+    /// Base class for all PEG expressions.
+    ///
+    /// The operator overloading contained here attempts to approximate the actual PEG grammar within
     /// the syntax of C#.  The normal PEG operators have been changed as follows:
-    /// 
-    /// sequence: No operator, just expressions followed in succession.  
+    ///
+    /// sequence: No operator, just expressions followed in succession.
     ///     This would be illegal in C# so the '+' operator is used to separate expressions in a sequence.
     /// ordered choice: '/'
-    ///     The precedence of this operator in C# would be far too high so has been changed to the traditional 
+    ///     The precedence of this operator in C# would be far too high so has been changed to the traditional
     ///     pipe character ('|') which has very low precedence.
     /// one or more: '+'
     ///     In C# it's the same, but the unary operator must precede the expression, rather than be a suffix.
@@ -27,11 +25,11 @@ namespace PEG.SyntaxTree
     ///     We have run out of operators, so we will use a extension method named "And".
     /// not predicate: '!'
     ///     Exactly the same.
-    ///     
+    ///
     /// </summary>
-    public abstract class Expression 
+    public abstract class Expression
     {
-        public abstract IEnumerable<OutputRecord> Execute(ParseEngine engine);
+        public abstract ParseOutputSpan Execute(ParseEngine engine);
         public abstract void Accept<T>(IExpressionVisitor<T> visitor, T context);
 
         protected static IEnumerable<OutputRecord> NoResults = Enumerable.Empty<OutputRecord>();
@@ -70,7 +68,7 @@ namespace PEG.SyntaxTree
                 Sequence sequence = new Sequence();
                 sequence.Expressions.Add(left);
                 sequence.Expressions.Add(right);
-                return sequence;                
+                return sequence;
             }
         }
 
@@ -108,12 +106,12 @@ namespace PEG.SyntaxTree
                 OrderedChoice orderedChoice = new OrderedChoice();
                 orderedChoice.Expressions.Add(left);
                 orderedChoice.Expressions.Add(right);
-                return orderedChoice;                
+                return orderedChoice;
             }
         }
 
         /// <summary>
-        /// Applies the <i>one-or-more</i> operator onto the operand (the expression that 
+        /// Applies the <i>one-or-more</i> operator onto the operand (the expression that
         /// follows this operator).
         /// </summary>
         public static Expression operator +(Expression operand)

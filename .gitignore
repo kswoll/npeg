@@ -8,3 +8,4 @@ PEG.Samples/bin/
 *.DS_Store
 packages/
 .vs/
+_ReSharper.Caches/

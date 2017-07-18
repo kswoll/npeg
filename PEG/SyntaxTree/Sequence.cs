@@ -23,22 +23,21 @@ namespace PEG.SyntaxTree
             return new Sequence(sequence.ToCharArray().Select(o => (Terminal)o).ToArray());
         }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
             var mark = engine.Mark();
-            IEnumerable<OutputRecord> result = NoResults;
 
             foreach (Expression expression in Expressions)
             {
-                IEnumerable<OutputRecord> current = expression.Execute(engine);
-                if (engine.IsFailure(current))
+                var current = expression.Execute(engine);
+                if (current.IsFailed)
                 {
                     engine.Reset(mark);
-                    return current;                    
+                    return engine.False;
                 }
-                result = result.Concat(current);
             }
-            return result;
+
+            return engine.Return(mark);
         }
 
         public override string ToString()
