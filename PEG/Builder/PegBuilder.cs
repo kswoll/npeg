@@ -12,11 +12,12 @@ namespace PEG.Builder
 {
     public class PegBuilder<T>
     {
-        private Grammar grammar;
-        private Dictionary<Type, string> nonterminalNames = new Dictionary<Type, string>();
+        private static readonly HashSet<Type> simpleTypes = new HashSet<Type>(new[] { typeof(string), typeof(bool), typeof(byte), typeof(short), typeof(int), typeof(long), typeof(float), typeof(double), typeof(Decimal), typeof(DateTime), typeof(TimeSpan) });
+
+        private readonly DictionaryList<string, TypeRecord> astTypes = new DictionaryList<string, TypeRecord>();
+        private readonly DictionaryList<Nonterminal, AstAttribute> astAttributes = new DictionaryList<Nonterminal, AstAttribute>();
+
         private Func<Type, object> factory;
-        private DictionaryList<string, TypeRecord> astTypes = new DictionaryList<string, TypeRecord>();
-        private DictionaryList<Nonterminal, AstAttribute> astAttributes = new DictionaryList<Nonterminal, AstAttribute>();
 
         public PegBuilder(Grammar grammar) : this(grammar, true)
         {
@@ -24,8 +25,6 @@ namespace PEG.Builder
 
         public PegBuilder(Grammar grammar, bool searchSubclasses)
         {
-            this.grammar = grammar;
-
             foreach (var rule in grammar.Nonterminals)
             {
                 string name = rule.Name;
@@ -45,18 +44,8 @@ namespace PEG.Builder
                 }
             }
 
-            HashSet<Type> types = new HashSet<Type>();
+            var types = new HashSet<Type>();
             WalkTypeForNonTerminals(typeof(T), types, searchSubclasses);
-
-            foreach (Type type in types)
-            {
-                ConsumeAttribute[] nonterminalAttributes = type.GetAttributes<ConsumeAttribute>();
-                foreach (var attribute in nonterminalAttributes)
-                {
-                    //                    nonterminalTypes[attribute.Expression] = type;
-                    nonterminalNames[type] = attribute.Expression;
-                }
-            }
         }
 
         public Type GetSubclass(ref CstNonterminalNode node, string ruleName)
@@ -85,14 +74,14 @@ namespace PEG.Builder
 
         public Func<Type, object> Factory
         {
-            get { return factory; }
-            set { factory = value; }
+            get => factory;
+            set => factory = value;
         }
 
-        class TypeRecord
+        private class TypeRecord
         {
-            public ConsumeExpression expression;
-            public Type type;
+            public readonly ConsumeExpression expression;
+            public readonly Type type;
 
             public TypeRecord(ConsumeExpression expression, Type type)
             {
@@ -122,7 +111,7 @@ namespace PEG.Builder
             if (searchSubclasses)
             {
                 Type[] subclasses = type.Assembly.GetTypes().Where(o => o != type && type.IsAssignableFrom(o)).ToArray();
-                subclasses.Foreach(o => WalkTypeForNonTerminals(o, checkedTypes, searchSubclasses));
+                subclasses.Foreach(o => WalkTypeForNonTerminals(o, checkedTypes, true));
             }
         }
 
@@ -296,8 +285,6 @@ namespace PEG.Builder
                 return Activator.CreateInstance(astNodeType);
         }
 
-        private static readonly HashSet<Type> simpleTypes = new HashSet<Type>(new[] { typeof(string), typeof(bool), typeof(byte), typeof(short), typeof(int), typeof(long), typeof(float), typeof(double), typeof(Decimal), typeof(DateTime), typeof(TimeSpan) });
-
         private bool IsSimpleType(Type type)
         {
             return simpleTypes.Contains(type);
@@ -340,7 +327,6 @@ namespace PEG.Builder
 
         private IEnumerable<ICstNonterminalNode> GetChildrenByNonterminal(ICstNonterminalNode node, Nonterminal nonterminal)
         {
-            IEnumerable<ICstNonterminalNode> result = new ICstNonterminalNode[0];
             foreach (var childNode in node.Children
                 .OfType<ICstNonterminalNode>()
                 .Where(o => o.Nonterminal.Name == nonterminal.Name))
@@ -362,20 +348,19 @@ namespace PEG.Builder
                 }
                 else
                 {
-                    Func<Expression, Nonterminal> findNonterminal = null;
-                    findNonterminal = current =>
+                    Nonterminal FindNonterminal(Expression current)
                     {
                         if (current is Nonterminal)
-                            return (Nonterminal)current;
+                            return (Nonterminal) current;
                         else if (current is Sequence)
-                            return findNonterminal(((Sequence)current).Expressions.First());
+                            return FindNonterminal(((Sequence) current).Expressions.First());
                         else if (current is ZeroOrMore)
-                            return findNonterminal(((ZeroOrMore)current).Operand);
+                            return FindNonterminal(((ZeroOrMore) current).Operand);
                         else
-                            return findNonterminal(((OneOrMore)current).Operand);
-                    };
+                            return FindNonterminal(((OneOrMore) current).Operand);
+                    }
 
-                    Nonterminal nonterminal = findNonterminal(expression);
+                    Nonterminal nonterminal = FindNonterminal(expression);
                     itemNodes = GetChildrenByNonterminal(cstNode, nonterminal);
                 }
 
@@ -399,9 +384,9 @@ namespace PEG.Builder
             }
         }
 
-        public T Build(IEnumerable<OutputRecord> outputStream)
+        public T Build(ParseOutput output, ParseOutputSpan outputStream)
         {
-            CstNonterminalNode cstNode = CstBuilder.Build(outputStream);
+            CstNonterminalNode cstNode = CstBuilder.Build(output, outputStream);
             return Build((CstNonterminalNode)cstNode.Children[0]);
         }
     }

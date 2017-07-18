@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using PEG.SyntaxTree;
@@ -7,13 +6,10 @@ namespace PEG
 {
     public class ExpressionEnumerator : ExpressionWalker<object>, IEnumerable<Expression>
     {
-        private Expression root;
-        private List<Expression> expressions = new List<Expression>();
+        private readonly List<Expression> expressions = new List<Expression>();
 
         public ExpressionEnumerator(Expression root)
         {
-            this.root = root;
-
             root.Accept(this, null);
         }
 
@@ -99,25 +95,7 @@ namespace PEG
             base.Visit(expression, context);
         }
 
-        public override void Visit(Token expression, object context)
-        {
-            expressions.Add(expression);
-            base.Visit(expression, context);
-        }
-
         public override void Visit(ZeroOrMore expression, object context)
-        {
-            expressions.Add(expression);
-            base.Visit(expression, context);
-        }
-
-        public override void Visit(ForeignNonterminal expression, object context)
-        {
-            expressions.Add(expression);
-            base.Visit(expression, context);
-        }
-
-        public override void Visit(Substitution expression, object context)
         {
             expressions.Add(expression);
             base.Visit(expression, context);

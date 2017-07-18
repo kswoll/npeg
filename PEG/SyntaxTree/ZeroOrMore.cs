@@ -1,19 +1,18 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace PEG.SyntaxTree
 {
     public class ZeroOrMore : Expression
     {
         public Expression Operand { get; set; }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
-            IEnumerable<OutputRecord> result = NoResults;
-            IEnumerable<OutputRecord> current;
-            while (!engine.IsFailure(current = Operand.Execute(engine))) 
-                result = result.Concat(current);
-            return result;
+            var mark = engine.Mark();
+            while (!Operand.Execute(engine).IsFailed)
+            {
+                // Execute mutates state, so this body doesn't need to do anything
+            }
+
+            return engine.Return(mark);
         }
 
         public override string ToString()

@@ -1,12 +1,10 @@
-using System.Collections.Generic;
-
 namespace PEG.SyntaxTree
 {
     public class EmptyString : Expression
     {
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
-            return NoResults;
+            return engine.Nothing;
         }
 
         public override void Accept<T>(IExpressionVisitor<T> visitor, T context)

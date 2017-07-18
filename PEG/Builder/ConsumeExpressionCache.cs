@@ -4,8 +4,8 @@ namespace PEG.Builder
 {
     public class ConsumeExpressionCache
     {
-        private static Dictionary<string, ConsumeExpression> cache = new Dictionary<string, ConsumeExpression>();
-        private static object lockObject = new object();
+        private static readonly Dictionary<string, ConsumeExpression> cache = new Dictionary<string, ConsumeExpression>();
+        private static readonly object lockObject = new object();
 
         public static ConsumeExpression Get(string expression)
         {

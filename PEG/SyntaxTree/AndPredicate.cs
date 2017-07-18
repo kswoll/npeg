@@ -1,17 +1,15 @@
-using System.Collections.Generic;
-
 namespace PEG.SyntaxTree
 {
     public class AndPredicate : Expression
     {
         public Expression Operand { get; set; }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
             var mark = engine.Mark();
-            IEnumerable<OutputRecord> result = Operand.Execute(engine);
+            var result = Operand.Execute(engine);
             engine.Reset(mark);
-            return !engine.IsFailure(result) ? NoResults : null;
+            return !result.IsFailed ? engine.Nothing : engine.False;
         }
 
         public override void Accept<T>(IExpressionVisitor<T> visitor, T context)

@@ -8,3 +8,4 @@ C:\dev\npeg\PEG.Tests\bin\Debug\PEG.pdb
 C:\dev\npeg\PEG.Tests\bin\Debug\nunit.framework.xml
 C:\dev\npeg\PEG.Tests\obj\Debug\PEG.Tests.dll
 C:\dev\npeg\PEG.Tests\obj\Debug\PEG.Tests.pdb
+C:\dev\npeg\PEG.Tests\bin\Debug\System.ValueTuple.dll

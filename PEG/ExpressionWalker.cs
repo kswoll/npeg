@@ -1,4 +1,3 @@
-using System;
 using PEG.SyntaxTree;
 
 namespace PEG
@@ -64,31 +63,13 @@ namespace PEG
         {
         }
 
-        public virtual void Visit(Token expression, T context)
-        {
-        }
-
         public virtual void Visit(ZeroOrMore expression, T context)
         {
             expression.Operand.Accept(this, context);
         }
 
-        public virtual void Visit(ForeignNonterminal expression, T context)
-        {
-        }
-
-        public virtual void Visit(Substitution expression, T context)
-        {
-        }
-
         public virtual void Visit(Repeat expression, T context)
         {
-            expression.Operand.Accept(this, context);
-        }
-
-        public void Visit(EncloseExpression expression, T context)
-        {
-            expression.Enclosure.Accept(this, context);
             expression.Operand.Accept(this, context);
         }
     }

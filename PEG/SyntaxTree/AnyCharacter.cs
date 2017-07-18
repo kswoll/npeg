@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace PEG.SyntaxTree
 {
     public class AnyCharacter : Expression
@@ -17,15 +14,15 @@ namespace PEG.SyntaxTree
             OutputCharacters = outputCharacters;
         }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
             if (engine.Current == null)
-                return null;
+                return engine.False;
             if (OutputCharacters)
                 return engine.Current.Execute(engine);
-            else if (engine.Current.Execute(engine).Any())
-                return NoResults;
-            return null;
+            else if (!engine.Current.Execute(engine).IsFailed)
+                return engine.Nothing;
+            return engine.False;
         }
 
         public override void Accept<T>(IExpressionVisitor<T> visitor, T context)

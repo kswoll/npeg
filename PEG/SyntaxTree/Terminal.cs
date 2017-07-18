@@ -10,7 +10,7 @@ namespace PEG.SyntaxTree
         public ParseOutputSpan OutputResult(ParseOutput output, int position)
         {
             output.Add(new OutputRecord(this, position));
-            return new ParseOutputSpan(true, position, position + 1);
+            return new ParseOutputSpan(false, position, position + 1);
         }
 
         public abstract string Coalesce();

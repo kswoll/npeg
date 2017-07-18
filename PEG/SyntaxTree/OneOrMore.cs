@@ -1,28 +1,24 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace PEG.SyntaxTree
 {
     public class OneOrMore : Expression
     {
         public Expression Operand { get; set; }
 
-        public IEnumerable<IEnumerable<OutputRecord>> GetResults(ParseEngine engine, IEnumerable<OutputRecord> first)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
-            do
+            var mark = engine.Mark();
+            var first = Operand.Execute(engine);
+            if (first.IsFailed)
             {
-                yield return first;
+                return engine.False;
             }
-            while (!engine.IsFailure(first = Operand.Execute(engine)));
-        }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
-        {
-            IEnumerable<OutputRecord> first = Operand.Execute(engine);
-            if (engine.IsFailure(first))
-                return first;
-            else
-                return GetResults(engine, first).ToArray().SelectMany(o => o);
+            while (!Operand.Execute(engine).IsFailed)
+            {
+                // Execute mutates state, so this body doesn't need to do anything
+            }
+
+            return engine.Return(mark);
         }
 
         public override string ToString()

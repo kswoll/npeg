@@ -1,17 +1,13 @@
-using System.Collections.Generic;
-
 namespace PEG.SyntaxTree
 {
     public class Optional : Expression
     {
         public Expression Operand { get; set; }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
-            IEnumerable<OutputRecord> result = Operand.Execute(engine);
-            if (!engine.IsFailure(result))
-                return result;
-            return NoResults;
+            var result = Operand.Execute(engine);
+            return !result.IsFailed ? result : engine.Nothing;
         }
 
         public override string ToString()

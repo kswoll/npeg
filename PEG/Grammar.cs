@@ -9,7 +9,7 @@ namespace PEG
 {
     public class Grammar
     {
-        public static EmptyString E = new EmptyString();
+        public static EmptyString Empty = new EmptyString();
         public static AnyCharacter Any = new AnyCharacter();
 
         public List<Nonterminal> Nonterminals { get; set; }
@@ -34,7 +34,7 @@ namespace PEG
 
         public Nonterminal GetNonterminal(string name)
         {
-            return Nonterminals.Where(o => o.Name == name).FirstOrDefault();
+            return Nonterminals.FirstOrDefault(o => o.Name == name);
         }
     }
 
@@ -58,7 +58,7 @@ namespace PEG
 
         public void Initialize()
         {
-            var missingVirtual = typeof(T).GetMethods().Where(x => x.DeclaringType != typeof(Expression) && x.DeclaringType != typeof(Grammar) && x.ReturnType == typeof(Expression) && !x.IsVirtual);
+            var missingVirtual = typeof(T).GetMethods().Where(x => x.DeclaringType != typeof(Expression) && x.DeclaringType != typeof(Grammar) && x.ReturnType == typeof(Expression) && !x.IsVirtual).ToArray();
             if (missingVirtual.Any())
                 throw new InvalidOperationException("The expression methods in your grammar must be declared virtual: " + string.Join(", ", missingVirtual.Select(x => x.Name)));
         }

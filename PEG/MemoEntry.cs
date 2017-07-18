@@ -1,15 +1,15 @@
-using System.Collections.Generic;
+using PEG.SyntaxTree;
 
 namespace PEG
 {
     public enum MemoStatus { Failed, Success }
 
-    public class MemoEntry
+    public struct MemoEntry
     {
-        public IEnumerable<OutputRecord> Answer { get; set; }
-        public int Position { get; set; }
+        public ParseOutputSpan Answer { get; }
+        public int Position { get; }
 
-        public MemoEntry(IEnumerable<OutputRecord> output, int position)
+        public MemoEntry(ParseOutputSpan output, int position)
         {
             Answer = output;
             Position = position;

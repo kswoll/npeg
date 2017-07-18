@@ -1,20 +1,14 @@
-using System.Collections.Generic;
-
 namespace PEG.SyntaxTree
 {
     public class NotPredicate : Expression
     {
         public Expression Operand { get; set; }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
             var mark = engine.Mark();
-            IEnumerable<OutputRecord> result = Operand.Execute(engine);
-            IEnumerable<OutputRecord> returnValue;
-            if (engine.IsFailure(result))
-                returnValue = NoResults;
-            else
-                returnValue = null;
+            var result = Operand.Execute(engine);
+            var returnValue = result.IsFailed ? engine.Nothing : engine.False;
             engine.Reset(mark);
             return returnValue;
         }

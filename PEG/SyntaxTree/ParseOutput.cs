@@ -27,5 +27,13 @@ namespace PEG.SyntaxTree
         {
             count = outputPosition;
         }
+
+        public IEnumerable<OutputRecord> GetRecords(ParseOutputSpan parseOutputSpan)
+        {
+            for (var i = parseOutputSpan.Start; i < parseOutputSpan.End; i++)
+            {
+                yield return storage[i];
+            }
+        }
     }
 }

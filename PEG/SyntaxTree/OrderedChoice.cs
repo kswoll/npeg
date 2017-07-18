@@ -12,18 +12,15 @@ namespace PEG.SyntaxTree
             Expressions = new List<Expression>();
         }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
-            IEnumerable<OutputRecord> nullResult = null;
-            foreach (Expression expression in Expressions)
+            foreach (var expression in Expressions)
             {
                 var current = expression.Execute(engine);
-                if (!engine.IsFailure(current))
+                if (!current.IsFailed)
                     return current;
-                else if (nullResult == null && current != null)
-                    nullResult = current;
             }
-            return nullResult;
+            return engine.False;
         }
 
         public override string ToString()

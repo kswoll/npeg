@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using PEG.SyntaxTree;
 using PEG.Utils;
@@ -21,7 +20,12 @@ namespace PEG
         /// </summary>
         public string RawInput { get; set; }
 
-        public ParseOutput Output { get; set; }
+        public ParseOutput Output { get; set; } = new ParseOutput();
+
+        /// <summary>
+        /// Current input symbol
+        /// </summary>
+        public Terminal Current => Position < Input.Length ? Input[Position] : null;
 
         /// <summary>
         /// The grammar
@@ -56,7 +60,7 @@ namespace PEG
         /// invocation of a nonterminal at a given position.  The first index is the nonterminal, and the
         /// second index is the position in the input.
         /// </summary>
-        public MemoEntry[,] MemoTable { get; set; }
+        public MemoEntry?[,] MemoTable { get; set; }
 
         /// <summary>
         /// The farthest point the parser reached.  Usually this is a pretty good indicator of precisely
@@ -66,9 +70,8 @@ namespace PEG
 
         public bool IsLogEnabled { get; set; }
 
-        public ParseOutputSpan False => new ParseOutputSpan(false, Position, Position);
-
-        private List<Func<IEnumerable<OutputRecord>>> interceptorStack = new List<Func<IEnumerable<OutputRecord>>>();
+        public ParseOutputSpan False => new ParseOutputSpan(true, Position, Position);
+        public ParseOutputSpan Nothing => new ParseOutputSpan(false, Position, Position);
 
         public ParseEngine(Grammar grammar, string input)
         {
@@ -89,7 +92,7 @@ namespace PEG
         private void Init()
         {
             TerminalsCache = new DynamicArray<Terminal>();
-            MemoTable = new MemoEntry[Input.Length + 1, Grammar.Nonterminals.Count];
+            MemoTable = new MemoEntry?[Input.Length + 1, Grammar.Nonterminals.Count];
             IsLogEnabled = true;
         }
 
@@ -107,14 +110,6 @@ namespace PEG
         }
 
         /// <summary>
-        /// Current input symbol
-        /// </summary>
-        public Terminal Current
-        {
-            get { return Position < Input.Length ? Input[Position] : null; }
-        }
-
-        /// <summary>
         /// Abstracts the idea of marking and resetting in case we ever need to keep track of
         /// more than the position.  (for now, merely returns the position)
         /// </summary>
@@ -124,26 +119,12 @@ namespace PEG
             return new ParseMark(Position, Output.Count);
         }
 
-        private bool isIntercepting;
-
         /// <summary>
         /// Increments the Position by 1.
         /// </summary>
         public bool Consume()
         {
             Log("Consumed " + Current.ToString());
-
-            if (interceptorStack.Count > 0 && !isIntercepting)
-            {
-                isIntercepting = true;
-                for (int i = interceptorStack.Count - 1; i >= 0; i--)
-                {
-                    var predicate = interceptorStack[i];
-                    if (!IsFailure(predicate()))
-                        return false;
-                }
-                isIntercepting = false;
-            }
 
             Position++;
             if (Position > MaxPosition)
@@ -169,12 +150,12 @@ namespace PEG
         /// <param name="nonterminal"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public virtual IEnumerable<OutputRecord> ApplyNonterminal(Nonterminal nonterminal, int position)
+        public virtual ParseOutputSpan ApplyNonterminal(Nonterminal nonterminal, int position)
         {
             Depth++;
             try
             {
-                MemoEntry memoEntry = MemoTable[position, nonterminal.Index];
+                MemoEntry? memoEntry = MemoTable[position, nonterminal.Index];
                 if (memoEntry == null)
                 {
                     var answer = nonterminal.Eval(this);
@@ -184,24 +165,14 @@ namespace PEG
                 }
                 else
                 {
-                    Position = memoEntry.Position;
-                    return memoEntry.Answer;
+                    Position = memoEntry.Value.Position;
+                    return memoEntry.Value.Answer;
                 }
             }
             finally
             {
                 Depth--;
             }
-        }
-
-        public void AddInterceptor(Func<IEnumerable<OutputRecord>> expression)
-        {
-            interceptorStack.Add(expression);
-        }
-
-        public void RemoveInterceptor(Func<IEnumerable<OutputRecord>> expression)
-        {
-            interceptorStack.Remove(expression);
         }
 
         public ParseOutputSpan Return(ParseMark mark)

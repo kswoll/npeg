@@ -6,6 +6,7 @@ namespace PEG.Builder
 {
     public class ConsumeExpressionParsing : Grammar<ConsumeExpressionParsing>
     {
+        // ReSharper disable once FunctionRecursiveOnAllPaths
         public virtual Expression Choice()
         {
             return Choice() + ~WS() + '|' + ~WS() + Conditional() | Conditional();
@@ -68,14 +69,13 @@ namespace PEG.Builder
 
         public static ConsumeExpressionParsing Grammar = Create();
         public static PegParser Parser = new PegParser(Grammar, Grammar.Choice());
-        //        public static PegBuilder<ConsumeChoice> Builder = new PegBuilder<ConsumeChoice>(Grammar);
 
         public static ConsumeExpression Parse(string s)
         {
             var result = Parser.ParseString(s);
 
             // Bypass BnfBuilder because that depends on this in order to work
-            CstNonterminalNode cst = CstBuilder.Build(result);
+            var cst = CstBuilder.Build(result.output, result.span);
             return BuildChoice(cst);
         }
 

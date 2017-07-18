@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace PEG.SyntaxTree
 {
     public class Repeat : Expression
@@ -9,24 +6,20 @@ namespace PEG.SyntaxTree
         public int Min { get; set; }
         public int Max { get; set; }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine engine)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
-            IEnumerable<OutputRecord> result = NoResults;
-            IEnumerable<OutputRecord> current;
-
+            var mark = engine.Mark();
             int count;
-            for (count = 0; !engine.IsFailure(current = Operand.Execute(engine)); count++)
+            for (count = 0; !Operand.Execute(engine).IsFailed; count++)
             {
                 if (count > Max)
-                    return null;
-
-                result = result.Concat(current);                
+                    return engine.Nothing;
             }
 
             if (count < Min)
-                return null;
+                return engine.Nothing;
 
-            return result;
+            return engine.Return(mark);
         }
 
         public override string ToString()
@@ -37,6 +30,6 @@ namespace PEG.SyntaxTree
         public override void Accept<T>(IExpressionVisitor<T> visitor, T context)
         {
             visitor.Visit(this, context);
-        }        
+        }
     }
 }

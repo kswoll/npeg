@@ -37,7 +37,7 @@ namespace PEG
         {
             var parser = CreateParser(expression);
             var result = parser.ParseString(input);
-            return result != null && result.Any();
+            return !result.span.IsFailed && result.span.Any;
         }
 
         /// <summary>
@@ -49,8 +49,8 @@ namespace PEG
         {
             var exp = +(expression | new AnyCharacter(false));
             var parser = CreateParser(exp);
-            IEnumerable<OutputRecord> outputRecords = parser.ParseString(input);
-            return outputRecords.Skip(2).Any();     // Skip begin/end of implicit root nonterminal
+            var outputRecords = parser.ParseString(input);
+            return outputRecords.span.Count > 2;     // Skip begin/end of implicit root nonterminal
         }
 
         /// <summary>
@@ -75,10 +75,10 @@ namespace PEG
             var parser = CreateParser(expression);
 
             var output = parser.ParseString(input);
-            if (!output.Any())
+            if (!output.span.Any)
                 return input;
 
-            var cst = CstBuilder.Build(output);
+            var cst = CstBuilder.Build(output.output, output.span);
             cst = (CstNonterminalNode)cst.Children[0];
             var cache = new CstCache(cst);
             var map = replacements.ToDictionary(x => x.From, x => x.To.Replace(cache));
@@ -103,10 +103,10 @@ namespace PEG
             var parser = CreateParser(exp);
 
             var output = parser.ParseString(input);
-            if (!output.Any())
+            if (!output.span.Any)
                 return input;
 
-            var cst = CstBuilder.Build(output);
+            var cst = CstBuilder.Build(output.output, output.span);
             cst = (CstNonterminalNode)cst.Children[0];
 
             var transformedCst = new CstNonterminalNode(cst.Nonterminal, -1);
@@ -145,7 +145,8 @@ namespace PEG
         public static Dictionary<Nonterminal, string> Parse(this Expression expression, string input)
         {
             var parser = CreateParser(expression);
-            var output = CstBuilder.Build(parser.ParseString(input));
+            var parse = parser.ParseString(input);
+            var output = CstBuilder.Build(parse.output, parse.span);
             if (output == null)
                 return null;
 
@@ -239,24 +240,6 @@ namespace PEG
             AndPredicate andPredicate = new AndPredicate();
             andPredicate.Operand = operand;
             return andPredicate;
-        }
-
-        public static EncloseExpression Enclose(this char enclosure, Expression operand)
-        {
-            return enclosure._().Enclose(operand);
-        }
-
-        public static EncloseExpression Enclose(this string enclosure, Expression operand)
-        {
-            return enclosure._().Enclose(operand);
-        }
-
-        public static EncloseExpression Enclose(this Expression enclosure, Expression operand)
-        {
-            EncloseExpression enclose = new EncloseExpression();
-            enclose.Enclosure = enclosure;
-            enclose.Operand = operand;
-            return enclose;
         }
 
         public static AnyCharacter Any(this char c)

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace PEG.SyntaxTree
 {
     public class Nonterminal : Expression
@@ -21,45 +19,36 @@ namespace PEG.SyntaxTree
             Expression = expression;
         }
 
-        public IEnumerable<OutputRecord> AsResult(IEnumerable<OutputRecord> children, int startPosition, int endPosition)
+        public ParseOutputSpan Eval(ParseEngine engine)
         {
-            yield return new OutputRecord(this, OutputType.Begin, startPosition);
-            foreach (OutputRecord child in children)
-                yield return child;
-            yield return new OutputRecord(this, OutputType.End, endPosition);
-        }
+            var mark = engine.Mark();
+            engine.Output.Add(new OutputRecord(this, OutputType.Begin, mark.OutputPosition));
 
-        public IEnumerable<OutputRecord> Eval(ParseEngine context)
-        {
-            int startPosition = context.Position;
-            IEnumerable<OutputRecord> children = Expression.Execute(context);
-            if (context.IsFailure(children))
-                return children;
+            var children = Expression.Execute(engine);
+            if (children.IsFailed)
+            {
+                engine.Reset(mark);
+                return engine.False;
+            }
             else
             {
-                int endPosition = context.Position;
-                return AsResult(children, startPosition, endPosition);
+                engine.Output.Add(new OutputRecord(this, OutputType.End, engine.Position));
+                return engine.Return(mark);
             }
         }
 
-        public override IEnumerable<OutputRecord> Execute(ParseEngine context)
+        public override ParseOutputSpan Execute(ParseEngine engine)
         {
-            context.Log(ToString());
-            context.Log("{");
-//            if (!context.Grammar.IsTokenGrammar)
-//                Console.WriteLine("Executing " + Name);
-            IEnumerable<OutputRecord> nonterminal = context.ApplyNonterminal(this, context.Position);
-//            if (!context.Grammar.IsTokenGrammar)
-//                Console.WriteLine("Executed " + Name);
-//            if (!context.IsFailure(nonterminal) && !context.Grammar.IsTokenGrammar)
-//                Logger.WriteLine("Accepted " + Name + " (" + nonterminal.Concatenate(" ", o => o.OutputType == OutputType.None ? o.ToString() : "") + ")");
+            engine.Log(ToString());
+            engine.Log("{");
 
-            if (context.IsFailure(nonterminal))
-                context.Log(ParseEngine.Indent + "Failed");
-            else 
-                context.Log(ParseEngine.Indent + "Succeeded");
+            var nonterminal = engine.ApplyNonterminal(this, engine.Position);
+            if (nonterminal.IsFailed)
+                engine.Log(ParseEngine.Indent + "Failed");
+            else
+                engine.Log(ParseEngine.Indent + "Succeeded");
 
-            context.Log("}");
+            engine.Log("}");
 
             return nonterminal;
         }

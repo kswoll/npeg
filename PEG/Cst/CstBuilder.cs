@@ -1,14 +1,13 @@
 using System.Collections.Generic;
-using System.Linq;
 using PEG.SyntaxTree;
 
 namespace PEG.Cst
 {
     public static class CstBuilder
     {
-        public static CstNonterminalNode Build(IEnumerable<OutputRecord> outputStream)
+        public static CstNonterminalNode Build(ParseOutput parseOutput, ParseOutputSpan outputStream)
         {
-            if (outputStream == null || !outputStream.Any())
+            if (outputStream.IsFailed || !outputStream.Any)
                 return null;
 
             Stack<CstNonterminalNode> stack = new Stack<CstNonterminalNode>();
@@ -16,7 +15,7 @@ namespace PEG.Cst
             int absoluteIndex = 0;
             CstNonterminalNode current = new CstNonterminalNode(null, absoluteIndex);
 
-            foreach (OutputRecord output in outputStream)
+            foreach (OutputRecord output in outputStream.GetRecords(parseOutput))
             {
                 switch (output.OutputType)
                 {

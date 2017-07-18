@@ -62,6 +62,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -121,9 +124,7 @@
     <Compile Include="SyntaxTree\CharacterSet.cs" />
     <Compile Include="SyntaxTree\CharacterTerminal.cs" />
     <Compile Include="SyntaxTree\EmptyString.cs" />
-    <Compile Include="SyntaxTree\EncloseExpression.cs" />
     <Compile Include="SyntaxTree\Expression.cs" />
-    <Compile Include="SyntaxTree\ForeignNonterminal.cs" />
     <Compile Include="SyntaxTree\IExpressionVisitor.cs" />
     <Compile Include="SyntaxTree\Nonterminal.cs" />
     <Compile Include="SyntaxTree\NotPredicate.cs" />
@@ -133,14 +134,9 @@
     <Compile Include="SyntaxTree\ParseOutput.cs" />
     <Compile Include="SyntaxTree\ParseOutputSpan.cs" />
     <Compile Include="SyntaxTree\Repeat.cs" />
-    <Compile Include="SyntaxTree\Substitution.cs" />
     <Compile Include="SyntaxTree\Sequence.cs" />
     <Compile Include="SyntaxTree\Terminal.cs" />
-    <Compile Include="SyntaxTree\Token.cs" />
     <Compile Include="SyntaxTree\ZeroOrMore.cs" />
-    <Compile Include="TokenAttribute.cs" />
-    <Compile Include="TokenizerAttribute.cs" />
-    <Compile Include="TokenParseInput.cs" />
     <Compile Include="Utils\BitShift.cs" />
     <Compile Include="Utils\BooleanSet.cs" />
     <Compile Include="Utils\DictionaryList.cs" />

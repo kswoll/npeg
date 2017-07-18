@@ -99,8 +99,8 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.LetterA()));
-            Assert.IsNotNull(parser.ParseString("a"));
-            Assert.IsNull(parser.ParseString("b"));
+            Assert.IsFalse(parser.ParseString("a").span.IsFailed);
+            Assert.IsTrue(parser.ParseString("b").span.IsFailed);
         }
 
         [Test]
@@ -108,9 +108,9 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.LetterChoice()));
-            Assert.IsNotNull(parser.ParseString("a"));
-            Assert.IsNotNull(parser.ParseString("b"));
-            Assert.IsNull(parser.ParseString("c"));
+            Assert.IsFalse(parser.ParseString("a").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("b").span.IsFailed);
+            Assert.IsTrue(parser.ParseString("c").span.IsFailed);
         }
 
         [Test]
@@ -118,9 +118,9 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.NonterminalAndLetterChoice()));
-            Assert.IsNotNull(parser.ParseString("a"));
-            Assert.IsNotNull(parser.ParseString("b"));
-            Assert.IsNull(parser.ParseString("c"));
+            Assert.IsFalse(parser.ParseString("a").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("b").span.IsFailed);
+            Assert.IsTrue(parser.ParseString("c").span.IsFailed);
         }
 
         [Test]
@@ -128,9 +128,9 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.NonterminalAndNonterminalChoice()));
-            Assert.IsNotNull(parser.ParseString("a"));
-            Assert.IsNotNull(parser.ParseString("b"));
-            Assert.IsNull(parser.ParseString("c"));
+            Assert.IsFalse(parser.ParseString("a").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("b").span.IsFailed);
+            Assert.IsTrue(parser.ParseString("c").span.IsFailed);
         }
 
         [Test]
@@ -138,9 +138,9 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.LetterSequence()));
-            Assert.IsNotNull(parser.ParseString("ab"));
-            Assert.IsNull(parser.ParseString("a"));
-            Assert.IsNull(parser.ParseString("b"));
+            Assert.IsFalse(parser.ParseString("ab").span.IsFailed);
+            Assert.IsTrue(parser.ParseString("a").span.IsFailed);
+            Assert.IsTrue(parser.ParseString("b").span.IsFailed);
         }
 
         [Test]
@@ -148,8 +148,8 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.NotLetterA()));
-            Assert.IsNull(parser.ParseString("a"));
-            Assert.IsNotNull(parser.ParseString("b", false));
+            Assert.IsTrue(parser.ParseString("a").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("b", false).span.IsFailed);
         }
 
         [Test]
@@ -157,8 +157,8 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.AndLetterA()));
-            Assert.IsNotNull(parser.ParseString("a", false));
-            Assert.IsNull(parser.ParseString("b"));
+            Assert.IsFalse(parser.ParseString("a", false).span.IsFailed);
+            Assert.IsTrue(parser.ParseString("b").span.IsFailed);
         }
 
         [Test]
@@ -166,11 +166,11 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.OneOrMoreLetterA()));
-            Assert.IsNotNull(parser.ParseString("a"));
-            Assert.IsNotNull(parser.ParseString("aa"));
-            Assert.IsNotNull(parser.ParseString("aaa"));
-            Assert.IsNull(parser.ParseString("b"));
-            Assert.IsNull(parser.ParseString(""));
+            Assert.IsFalse(parser.ParseString("a").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("aa").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("aaa").span.IsFailed);
+            Assert.IsTrue(parser.ParseString("b").span.IsFailed);
+            Assert.IsTrue(parser.ParseString("").span.IsFailed);
         }
 
         [Test]
@@ -178,20 +178,20 @@ namespace PEG.Tests
         {
             TestGrammar1 grammar = TestGrammar1.Create();
             PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.ZeroOrMoreLetterA()));
-            Assert.IsNotNull(parser.ParseString(""));
-            Assert.IsNotNull(parser.ParseString("a"));
-            Assert.IsNotNull(parser.ParseString("aa"));
-            Assert.IsNotNull(parser.ParseString("aaa"));
+            Assert.IsFalse(parser.ParseString("").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("a").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("aa").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("aaa").span.IsFailed);
         }
 
         [Test]
         public void LeftRecursion()
         {
-            TestGrammar1 grammar = TestGrammar1.Create();
-            PegParser parser = new PegParser(grammar, grammar.GetNonterminal(o => o.LeftRecursion()));
-            Assert.IsNotNull(parser.ParseString("a"));
-            Assert.IsNotNull(parser.ParseString("aa"));
-            Assert.IsNotNull(parser.ParseString("aaa"));
+            var grammar = TestGrammar1.Create();
+            var parser = new PegParser(grammar, grammar.GetNonterminal(o => o.LeftRecursion()));
+            Assert.IsFalse(parser.ParseString("a").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("aa").span.IsFailed);
+            Assert.IsFalse(parser.ParseString("aaa").span.IsFailed);
         }
     }
 }

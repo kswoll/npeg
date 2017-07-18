@@ -14,11 +14,7 @@ namespace PEG.SyntaxTree
         void Visit(OrderedChoice expression, T context);
         void Visit(Sequence expression, T context);
         void Visit(Terminal expression, T context);
-        void Visit(Token expression, T context);
         void Visit(ZeroOrMore expression, T context);
-        void Visit(ForeignNonterminal expression, T context);
-        void Visit(Substitution expression, T context);
         void Visit(Repeat expression, T context);
-        void Visit(EncloseExpression expression, T context);
     }
 }
