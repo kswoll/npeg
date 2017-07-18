@@ -23,6 +23,11 @@ namespace PEG.SyntaxTree
             count++;
         }
 
+        public int Mark()
+        {
+            return count;
+        }
+
         public void Reset(int outputPosition)
         {
             count = outputPosition;

@@ -20,8 +20,15 @@ namespace PEG.SyntaxTree
                 return engine.False;
             if (OutputCharacters)
                 return engine.Current.Execute(engine);
-            else if (!engine.Current.Execute(engine).IsFailed)
-                return engine.Nothing;
+            else
+            {
+                var mark = engine.Output.Mark();
+                if (!engine.Current.Execute(engine).IsFailed)
+                {
+                    engine.Output.Reset(mark);
+                    return engine.Nothing;
+                }
+            }
             return engine.False;
         }
 

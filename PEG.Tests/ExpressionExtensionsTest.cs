@@ -23,11 +23,9 @@ namespace PEG.Tests
         {
             var pattern = +('a'.To('Z') | '.') + '@' + +('a'.To('Z') | '.');
 
-            var pattern2 = +'0'.To('9');
-            pattern2.Match("42");
-
             Assert.IsTrue(pattern.Contains("asdf john@test.com asfd asdf asdf asdf"));
-            Assert.IsFalse(pattern.Contains("asdf john%test%com"));            
+            Assert.IsFalse(pattern.Contains("a%b"));
+            Assert.IsFalse(pattern.Contains("asdf john%test%com"));
         }
 
         [Test]
@@ -68,7 +66,7 @@ namespace PEG.Tests
             var pattern = month + '/' + day + '/' + digit.Repeat(4);
 
             const string input = "12/1/2004 and 2/8/1988";
-            
+
             string result = pattern.Replace(input, month.To(day), day.To(month));
 
             Assert.AreEqual("1/12/2004 and 8/2/1988", result);
