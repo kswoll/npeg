@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PEG.SyntaxTree;
 
 namespace PEG
@@ -8,11 +9,13 @@ namespace PEG
     {
         public ParseOutputSpan Answer { get; }
         public int Position { get; }
+        public IReadOnlyList<OutputRecord> Output { get; }
 
-        public MemoEntry(ParseOutputSpan output, int position)
+        public MemoEntry(ParseOutputSpan answer, int position, IReadOnlyList<OutputRecord> output = null)
         {
-            Answer = output;
+            Answer = answer;
             Position = position;
+            Output = output;
         }
     }
 }

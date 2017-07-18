@@ -24,10 +24,10 @@ namespace PEG.Samples.Lengths
         {
             get { return Inches / 12; }
         }
-        
+
         /// <summary>
         /// Valid measurement patterns:
-        /// 
+        ///
         /// X' Y.Z"  (feet, then inches in decimal)
         /// X'Y.Z"   (feet, then inches in decimal without any space)
         /// X'  Y.Z" (feet, then inches in decimal, multiple spaces)
@@ -45,8 +45,8 @@ namespace PEG.Samples.Lengths
                 result = default(Length);
                 return false;
             }
-            result = 
-                parsedLength.IntegerFeet > 0 ? new Length(parsedLength.IntegerFeet, parsedLength.Inches) : 
+            result =
+                parsedLength.IntegerFeet > 0 ? new Length(parsedLength.IntegerFeet, parsedLength.Inches) :
                 parsedLength.DecimalFeet > 0 ? new Length(parsedLength.DecimalFeet * 12) :
                 new Length(parsedLength.Inches);
             return true;
@@ -72,7 +72,7 @@ namespace PEG.Samples.Lengths
         {
             public virtual Expression Start()
             {
-                return 
+                return
                     IntegerFeet() + OptionalWhitespace() + '\'' + OptionalWhitespace() + Inches() + OptionalWhitespace() + '"' |
                     DecimalFeet() + OptionalWhitespace() + '\'' |
                     Inches() + OptionalWhitespace() + '"';

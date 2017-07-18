@@ -71,10 +71,10 @@ namespace PEG
                             LeftRecursionSet[position] = leftRecursion;
                         }
 
-                            // If there already is left-recursion going on, we may need to start keeping track of a new thread. Fortunately,
-                            // we can know that the new left-recursive state will end before we have to worry about the old one again, so
-                            // we can create a linked-list-based stack where each "Next" entry is further up the call stack.  The inverse
-                            // of this process is near the end.
+                        // If there already is left-recursion going on, we may need to start keeping track of a new thread. Fortunately,
+                        // we can know that the new left-recursive state will end before we have to worry about the old one again, so
+                        // we can create a linked-list-based stack where each "Next" entry is further up the call stack.  The inverse
+                        // of this process is near the end.
                         else if (leftRecursion.Rule != nonterminal)
                         {
                             // This is here because we don't ever want to add an entry to the stack that is already being evaluated.
@@ -148,7 +148,7 @@ namespace PEG
                                 }
 
                                 // Update the memo entry
-                                MemoTable[position, nonterminal.Index] = memoEntry = new MemoEntry(answer, Position);
+                                MemoTable[position, nonterminal.Index] = memoEntry = new MemoEntry(answer, Position, answer.GetRecords(Output).ToArray());
                             }
 
                             first = false;
@@ -186,6 +186,10 @@ namespace PEG
                 else
                 {
                     Position = memoEntry.Value.Position;
+                    foreach (var record in memoEntry.Value.Output)
+                    {
+                        Output.Add(record);
+                    }
                     return memoEntry.Value.Answer;
                 }
             }
