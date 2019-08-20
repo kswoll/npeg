@@ -69,9 +69,9 @@ namespace PEG.Proxies
 
     public class Proxy<T>
     {
-        private static ConstructorInfo invocationConstructor = typeof(Invocation).GetConstructors()[0];
-        private static MethodInfo invokeMethod = typeof(Action<Invocation>).GetMethod("Invoke");
-        private static MethodInfo getReturnValue = typeof(Invocation).GetProperty("ReturnValue").GetGetMethod();
+        private static readonly ConstructorInfo invocationConstructor = typeof(Invocation).GetConstructors()[0];
+        private static readonly MethodInfo invokeMethod = typeof(Action<Invocation>).GetMethod("Invoke");
+        private static readonly MethodInfo getReturnValue = typeof(Invocation).GetProperty("ReturnValue").GetGetMethod();
 
         private static Type proxyType = CreateProxyType();
 
@@ -89,7 +89,7 @@ namespace PEG.Proxies
         {
             string assemblyName = typeof(T).FullName + "__Proxy";
 
-            AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+            AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
             ModuleBuilder module = assembly.DefineDynamicModule(assemblyName);
             bool isIntf = typeof(T).IsInterface;
 
@@ -284,7 +284,7 @@ namespace PEG.Proxies
 
             staticIl.Emit(OpCodes.Ret);
 
-            Type proxyType = type.CreateType();
+            Type proxyType = type.CreateTypeInfo();
 
             return proxyType;
         }

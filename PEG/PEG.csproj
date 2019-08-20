@@ -1,174 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EBFDC314-9DB3-47BF-98BF-7AA81F4DD304}</ProjectGuid>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <OutputType>Library</OutputType>
-    <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>PEG</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <RootNamespace>PEG</RootNamespace>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.0.0</Version>
+    <Authors>Kirk Woll</Authors>
+    <Company />
+    <Product />
+    <PackageId>PEG</PackageId>
+    <Copyright>Copyright 2012-2019</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/kswoll/npeg</PackageProjectUrl>
+    <PackageTags>peg parser</PackageTags>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Log|AnyCPU'">
-    <OutputPath>bin\Log\</OutputPath>
-    <DefineConstants>DEBUG;LOG</DefineConstants>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Builder\AstAttribute.cs" />
-    <Compile Include="Builder\ConsumeAttribute.cs" />
-    <Compile Include="Builder\ConsumeChoice.cs" />
-    <Compile Include="Builder\ConsumeConditional.cs" />
-    <Compile Include="Builder\ConsumeExpression.cs" />
-    <Compile Include="Builder\ConsumeExpressionCache.cs" />
-    <Compile Include="Builder\ConsumeExpressionParsing.cs" />
-    <Compile Include="Builder\ConsumeIndexExpression.cs" />
-    <Compile Include="Builder\ConsumeReferenceExpression.cs" />
-    <Compile Include="Builder\PegBuilder.cs" />
-    <Compile Include="Cst\CstBuilder.cs" />
-    <Compile Include="Cst\CstCache.cs" />
-    <Compile Include="Cst\CstNonterminalNode.cs" />
-    <Compile Include="Cst\CstString.cs" />
-    <Compile Include="Cst\ICstNode.cs" />
-    <Compile Include="Cst\ICstNonterminalNode.cs" />
-    <Compile Include="Cst\ICstTerminalNode.cs" />
-    <Compile Include="ExpressionCompiler.cs" />
-    <Compile Include="ExpressionEnumerator.cs" />
-    <Compile Include="ExpressionExtensions.cs" />
-    <Compile Include="ExpressionWalker.cs" />
-    <Compile Include="Extensions\AttributeExtensions.cs" />
-    <Compile Include="Extensions\CharExtensions.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\ReflectionExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="FirstSet.cs" />
-    <Compile Include="Grammar.cs" />
-    <Compile Include="GrammarFactory.cs" />
-    <Compile Include="IParseInput.cs" />
-    <Compile Include="IPegBuilder.cs" />
-    <Compile Include="LeftRecursion.cs" />
-    <Compile Include="LrParseEngine.cs" />
-    <Compile Include="MemoEntry.cs" />
-    <Compile Include="NonterminalReplacementTarget.cs" />
-    <Compile Include="OutputRecord.cs" />
-    <Compile Include="ParseEngine.cs" />
-    <Compile Include="ParseError.cs" />
-    <Compile Include="ParseException.cs" />
-    <Compile Include="Peg.cs" />
-    <Compile Include="PegParser.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Proxies\Extensions\EmitExtensions.cs" />
-    <Compile Include="Proxies\Invocation.cs" />
-    <Compile Include="Proxies\Proxy.cs" />
-    <Compile Include="Replacement.cs" />
-    <Compile Include="IReplacementTarget.cs" />
-    <Compile Include="StringParseInput.cs" />
-    <Compile Include="StringReplacementTarget.cs" />
-    <Compile Include="SyntaxTree\AndPredicate.cs" />
-    <Compile Include="SyntaxTree\AnyCharacter.cs" />
-    <Compile Include="SyntaxTree\AnyCharacterTerminal.cs" />
-    <Compile Include="SyntaxTree\CharacterRange.cs" />
-    <Compile Include="SyntaxTree\CharacterSet.cs" />
-    <Compile Include="SyntaxTree\CharacterTerminal.cs" />
-    <Compile Include="SyntaxTree\EmptyString.cs" />
-    <Compile Include="SyntaxTree\EncloseExpression.cs" />
-    <Compile Include="SyntaxTree\Expression.cs" />
-    <Compile Include="SyntaxTree\ForeignNonterminal.cs" />
-    <Compile Include="SyntaxTree\IExpressionVisitor.cs" />
-    <Compile Include="SyntaxTree\Nonterminal.cs" />
-    <Compile Include="SyntaxTree\NotPredicate.cs" />
-    <Compile Include="SyntaxTree\NullTerminal.cs" />
-    <Compile Include="SyntaxTree\OneOrMore.cs" />
-    <Compile Include="SyntaxTree\Optional.cs" />
-    <Compile Include="SyntaxTree\OrderedChoice.cs" />
-    <Compile Include="SyntaxTree\Repeat.cs" />
-    <Compile Include="SyntaxTree\Substitution.cs" />
-    <Compile Include="SyntaxTree\Sequence.cs" />
-    <Compile Include="SyntaxTree\Terminal.cs" />
-    <Compile Include="SyntaxTree\Token.cs" />
-    <Compile Include="SyntaxTree\ZeroOrMore.cs" />
-    <Compile Include="TokenAttribute.cs" />
-    <Compile Include="TokenizerAttribute.cs" />
-    <Compile Include="TokenParseInput.cs" />
-    <Compile Include="Utils\BitShift.cs" />
-    <Compile Include="Utils\BooleanSet.cs" />
-    <Compile Include="Utils\DictionaryList.cs" />
-    <Compile Include="Utils\DictionarySet.cs" />
-    <Compile Include="Utils\DynamicArray.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
-  <ProjectExtensions>
-    <VisualStudio AllowExistingFolder="true" />
-  </ProjectExtensions>
+
 </Project>
