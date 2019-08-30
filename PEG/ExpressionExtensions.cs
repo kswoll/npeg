@@ -189,6 +189,7 @@ namespace PEG
             Nonterminal result = new Nonterminal();
             result.Name = name;
             result.Expression = expression;
+            result.Index = -1;
             return result;
         }
 
@@ -203,6 +204,7 @@ namespace PEG
         {
             Nonterminal result = new Nonterminal();
             result.Expression = expression;
+            result.Index = -1;
             return result;
         }
 

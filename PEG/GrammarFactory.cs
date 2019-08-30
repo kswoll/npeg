@@ -13,9 +13,8 @@ namespace PEG
         {
             GrammarFactory<T> factory = new GrammarFactory<T>();
             T result = Proxy.CreateProxy<T>(factory.InvocationHandler);
+            factory.grammar = result;
             result.NotifyCreated(args);
-
-            int nonterminalIndex = 0;
 
             // Now initialize the grammar
             foreach (MethodInfo method in typeof(T).GetMethods())
@@ -24,7 +23,7 @@ namespace PEG
                 {
                     Nonterminal rule = new Nonterminal();
                     rule.Name = method.Name;
-                    rule.Index = nonterminalIndex++;
+                    rule.Index = factory.nonterminalIndex++;
                     result.Nonterminals.Add(rule);
 
 //                    if (method.HasAttribute<StartRuleAttribute>())
@@ -82,9 +81,15 @@ namespace PEG
             return result;
         }
 
+        private T grammar;
         private MethodInfo activeMethod;
         private Dictionary<string, Nonterminal> rules = new Dictionary<string, Nonterminal>();
+        private int nonterminalIndex;
 
+        /// <summary>
+        /// The point of this is to evaluate all of the expressions and assign them to the rule (NonTerminal).  The
+        /// "activeMethod" business is to escape recursion if a rule calls itself.
+        /// </summary>
         private void InvocationHandler(Invocation invocation)
         {
             Nonterminal result;
@@ -105,7 +110,35 @@ namespace PEG
                     if (rule.Expression == null)
                         rule.Expression = (Expression)invocation.ReturnValue;
                     invocation.ReturnValue = rule;
+
+                    // Now check for captured nonterminals (i.e. .Capture("foo"))
+                    var walker = new CaptureWalker();
+                    rule.Expression.Accept(walker, this);
+
                     activeMethod = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Looks for captured nonterminals so we can give them an index and register them.
+        /// </summary>
+        private class CaptureWalker : ExpressionWalker<GrammarFactory<T>>
+        {
+            public override void Visit(Nonterminal expression, GrammarFactory<T> context)
+            {
+                // Captured nonterminals are given an index of -1 when created.
+                if (expression.Index == -1)
+                {
+                    expression.Index = context.nonterminalIndex++;
+                    context.grammar.Nonterminals.Add(expression);
+
+                    // For these we still want to propagate the walk since there could be more nested content
+                    base.Visit(expression, context);
+                }
+                else
+                {
+                    // We don't propagate the walk since we don't want to follow into any other nonterminals
                 }
             }
         }
