@@ -1,10 +1,15 @@
-PEG/bin/
-PEG.Tests/obj/
+[Bb]in/
+[Oo]bj/
 *.suo
-PEG/obj/
-PEG.Tests/bin/
-PEG.Samples/obj/
-PEG.Samples/bin/
 *.DS_Store
-packages/
+**/[Pp]ackages/*
 .vs/
+.idea/
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# NuGet Packages
+*.nupkg
+# NuGet Symbol Packages
+*.snupkg
