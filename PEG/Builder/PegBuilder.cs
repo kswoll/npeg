@@ -338,65 +338,97 @@ namespace PEG.Builder
             return result;
         }
 
-        private IEnumerable<ICstNonterminalNode> GetChildrenByNonterminal(ICstNonterminalNode node, Nonterminal nonterminal)
+        private static IEnumerable<ICstNonterminalNode> GetChildrenByNonterminal(ICstNonterminalNode node, Nonterminal nonterminal)
         {
-            IEnumerable<ICstNonterminalNode> result = new ICstNonterminalNode[0];
-            foreach (var childNode in node.Children
+            if (nonterminal == null)
+                return null;
+            
+            return node.Children
                 .OfType<ICstNonterminalNode>()
-                .Where(o => o.Nonterminal.Name == nonterminal.Name))
+                .Where(o => o.Nonterminal.Name == nonterminal.Name);
+        }
+        
+        private static Nonterminal FindNonterminal(Expression current)
+        {
+            switch (current)
             {
-                yield return childNode;
+                case null:
+                case AndPredicate _:
+                case AnyCharacter _:
+                case CharacterSet _:
+                case EmptyString _:
+                case EncloseExpression _:
+                case ForeignNonterminal _:
+                    return null;
+                case Nonterminal nonterminal:
+                    return nonterminal;
+                case NotPredicate _:
+                    return null;
+                case OneOrMore oneOrMore:
+                    return FindNonterminal(oneOrMore.Operand);
+                case Optional _:
+                case OrderedChoice _:
+                case Repeat _:
+                    return null;
+                case Sequence sequence:
+                    return sequence.Expressions
+                        .Select(FindNonterminal)
+                        .FirstOrDefault(x => x != null);
+                case Substitution _:
+                case Terminal _:
+                    return null;
+                case ZeroOrMore zeroOrMore:
+                    return FindNonterminal(zeroOrMore.Operand);
+                default:
+                    // throw new ArgumentOutOfRangeException(nameof(current));
+                    return null;
             }
         }
-
+        
         private void BuildList(PropertyInfo property, object astNode, CstNonterminalNode cstNode)
         {
-            ConsumeExpression[] expressions = astAttributes[cstNode.Nonterminal].Select(o => o.GetExpression()).ToArray();
+            ConsumeExpression[] expressions = astAttributes[cstNode.Nonterminal]
+                .Select(o => o.GetExpression())
+                .ToArray();
             Expression expression = cstNode.Nonterminal.Expression;
-            if (expressions.Length > 0 || (expression is Sequence || expression is ZeroOrMore || expression is OneOrMore))
+
+            IList list = (IList) Activator.CreateInstance(property.PropertyType);
+            Type listType = property.PropertyType.GetListElementType();
+
+            IEnumerable<ICstNonterminalNode> itemNodes = null;
+
+            if (expressions.Length > 0)
             {
-                IEnumerable<ICstNonterminalNode> itemNodes;
-                if (expressions.Length > 0)
-                {
-                    itemNodes = GetChildrenByAstExpression(cstNode, expressions);
-                }
-                else
-                {
-                    Func<Expression, Nonterminal> findNonterminal = null;
-                    findNonterminal = current =>
-                    {
-                        if (current is Nonterminal)
-                            return (Nonterminal)current;
-                        else if (current is Sequence)
-                            return findNonterminal(((Sequence)current).Expressions.First());
-                        else if (current is ZeroOrMore)
-                            return findNonterminal(((ZeroOrMore)current).Operand);
-                        else
-                            return findNonterminal(((OneOrMore)current).Operand);
-                    };
-
-                    Nonterminal nonterminal = findNonterminal(expression);
-                    itemNodes = GetChildrenByNonterminal(cstNode, nonterminal);
-                }
-
-                IList list = (IList)Activator.CreateInstance(property.PropertyType);
-                Type listType = property.PropertyType.GetListElementType();
-                foreach (var childNode in itemNodes)
-                {
-                    object listItemAstNode = Build(listType, childNode);
-                    list.Add(listItemAstNode);
-                }
-                property.SetValue(astNode, list, null);
+                itemNodes = GetChildrenByAstExpression(cstNode, expressions);
             }
             else
             {
-                IList list = (IList)Activator.CreateInstance(property.PropertyType);
-                Type listType = property.PropertyType.GetListElementType();
+                switch (expression)
+                {
+                    case Sequence _:
+                    case ZeroOrMore _:
+                    case OneOrMore _:
+                    case Optional _:
+                    {
+                        Nonterminal nonterminal = FindNonterminal(expression);
+                        itemNodes = GetChildrenByNonterminal(cstNode, nonterminal);
+                        break;
+                    }
+                }
 
-                object listItemAstNode = Build(listType, cstNode);
-                list.Add(listItemAstNode);
-                property.SetValue(astNode, list, null);
+                if (itemNodes == null)
+                {
+                    itemNodes = new[] {cstNode};
+                }
             }
+
+            foreach (var childNode in itemNodes)
+            {
+                object listItemAstNode = Build(listType, childNode);
+                list.Add(listItemAstNode);
+            }
+
+            property.SetValue(astNode, list, null);
         }
 
         public T Build(IEnumerable<OutputRecord> outputStream)
